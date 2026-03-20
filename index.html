@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajánlat — Batthány Kastélyszálló | Scroll Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --gold:#FFD600;--gold2:#FFC107;--gold-glow:rgba(255,214,0,.15);
+    --bg:#08080a;--surface:#111114;--surface2:#1a1a1f;--surface3:#222228;
+    --border:rgba(255,255,255,.06);--border2:rgba(255,214,0,.2);
+    --text:#e8e8ec;--text2:#a0a0a8;--text3:#666;
+    --green:#34d399;--red:#f87171;--blue:#60a5fa;
+  }
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;width:100vw}
+
+  .slide{display:none;flex-direction:column;justify-content:center;align-items:center;
+    min-height:100vh;width:100vw;padding:50px 70px;position:absolute;top:0;left:0}
+  .slide.active{display:flex}
+  .slide .inner{opacity:0;transform:translateY(20px);transition:all .6s cubic-bezier(.16,1,.3,1)}
+  .slide.active .inner{opacity:1;transform:translateY(0)}
+  .slide.left-align{align-items:flex-start}
+  .slide.left-align .inner{width:100%;max-width:1300px}
+
+  .bg-glow{position:fixed;border-radius:50%;filter:blur(120px);opacity:.07;pointer-events:none;z-index:0}
+  .bg-glow.g1{width:600px;height:600px;background:var(--gold);top:-200px;right:-100px;animation:float1 20s ease-in-out infinite}
+  .bg-glow.g2{width:400px;height:400px;background:#6366f1;bottom:-150px;left:-100px;animation:float2 25s ease-in-out infinite}
+  .bg-glow.g3{width:300px;height:300px;background:var(--gold);bottom:20%;right:10%;animation:float3 18s ease-in-out infinite}
+  @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(-80px,60px)}}
+  @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,-40px)}}
+  @keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-60px)}}
+
+  .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s cubic-bezier(.16,1,.3,1);z-index:200}
+  .slide-num{position:fixed;bottom:24px;right:32px;font-size:13px;color:var(--text3);z-index:200;font-weight:500;letter-spacing:1px}
+  .nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:200}
+  .nav-dots .dot{width:8px;height:8px;border-radius:50%;background:var(--text3);opacity:.3;cursor:pointer;transition:all .3s}
+  .nav-dots .dot.active{background:var(--gold);opacity:1;transform:scale(1.3)}
+  .nav-hint{position:fixed;bottom:24px;left:32px;font-size:11px;color:var(--text3);z-index:200;opacity:.4}
+  .logo-fixed{position:fixed;top:24px;left:32px;font-size:14px;font-weight:700;color:var(--text3);z-index:200;letter-spacing:1px;opacity:.5}
+  .logo-fixed span{color:var(--gold)}
+
+  h1{font-size:4.5rem;font-weight:900;line-height:1.05;letter-spacing:-.03em}
+  h2{font-size:2.6rem;font-weight:800;margin-bottom:10px;line-height:1.15;letter-spacing:-.02em}
+  h3{font-weight:700;margin-bottom:12px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-size:.85rem}
+  .accent{color:var(--gold)}
+  .dim{color:var(--text3)}
+  .section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--gold);margin-bottom:20px;opacity:.8}
+  p.lead{font-size:1.2rem;line-height:1.7;font-weight:300;color:var(--text2);max-width:700px}
+  .sep{width:80px;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));margin:20px auto;border-radius:4px}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:40px;width:100%}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;width:100%}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;width:100%}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;position:relative;overflow:hidden;transition:all .3s}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .3s}
+  .card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+  .card:hover::before{opacity:1}
+  .card-icon{font-size:2rem;margin-bottom:16px;display:block}
+  .card h3{margin-bottom:10px}
+  .card p{font-size:.9rem;color:var(--text2);line-height:1.6}
+
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px;text-align:center;position:relative;overflow:hidden}
+  .stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--gold);opacity:.4}
+  .stat-card .val{font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+  .stat-card .lbl{font-size:.8rem;color:var(--text3);margin-top:8px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+
+  .highlight{background:linear-gradient(135deg,rgba(255,214,0,.06),rgba(255,214,0,.02));border:1px solid var(--border2);border-left:4px solid var(--gold);padding:20px 24px;border-radius:0 16px 16px 0;margin:20px 0}
+  .highlight p{font-size:1rem;color:var(--text);font-weight:400;line-height:1.6;max-width:none}
+
+  .tag{display:inline-block;background:var(--gold-glow);color:var(--gold);padding:6px 16px;border-radius:100px;font-size:.78rem;font-weight:600;margin:0 6px 8px 0;border:1px solid rgba(255,214,0,.15)}
+
+  /* ── Compare bars ── */
+  .compare-bar{display:flex;align-items:center;margin:12px 0;gap:12px}
+  .compare-bar .bar-label{font-size:.85rem;font-weight:600;color:var(--text);min-width:140px}
+  .compare-bar .bar-track{flex:1;height:32px;background:var(--surface2);border-radius:16px;overflow:hidden;position:relative}
+  .compare-bar .bar-fill{height:100%;border-radius:16px;display:flex;align-items:center;justify-content:flex-end;padding-right:14px;font-size:.8rem;font-weight:700;transition:width 1.2s ease}
+  .compare-bar .bar-fill.old{background:linear-gradient(90deg,#dc2626,var(--red));color:#fff}
+  .compare-bar .bar-fill.new{background:linear-gradient(90deg,var(--gold),var(--gold2));color:var(--bg)}
+  .compare-bar .bar-fill.zero{background:linear-gradient(90deg,var(--green),#059669);color:#fff}
+
+  /* ── Flow steps ── */
+  .flow{display:flex;align-items:center;gap:0;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  .flow-step{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:120px;max-width:160px}
+  .flow-icon{width:56px;height:56px;border-radius:50%;background:var(--surface);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:10px}
+  .flow-label{font-size:.8rem;color:var(--text2);line-height:1.4}
+  .flow-label strong{color:var(--text);display:block;font-size:.85rem}
+  .flow-arrow{font-size:1.5rem;color:var(--gold);margin:0 8px;opacity:.5;align-self:center;padding-bottom:30px}
+
+  /* ── Demo cards ── */
+  .demo-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:0;overflow:hidden;transition:all .4s;cursor:pointer;text-decoration:none;color:inherit;display:block}
+  .demo-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.5);border-color:var(--border2)}
+  .demo-card:hover .demo-preview{opacity:.9}
+  .demo-preview{height:200px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:4rem;opacity:.5;transition:opacity .3s}
+  .demo-body{padding:24px}
+  .demo-body h3{margin-bottom:6px}
+  .demo-body p{font-size:.88rem;color:var(--text2);line-height:1.5}
+  .demo-cta{display:inline-flex;align-items:center;gap:6px;color:var(--gold);font-weight:600;font-size:.85rem;margin-top:12px}
+  .demo-cta::after{content:'→';transition:transform .3s}
+  .demo-card:hover .demo-cta::after{transform:translateX(4px)}
+
+  /* ── Table ── */
+  table{width:100%;border-collapse:separate;border-spacing:0;margin-top:16px}
+  thead th{text-align:left;padding:12px 16px;font-size:.75rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:2px;border-bottom:2px solid var(--border2);background:var(--surface)}
+  thead th:first-child{border-radius:12px 0 0 0}thead th:last-child{border-radius:0 12px 0 0}
+  tbody td{padding:14px 16px;font-size:.95rem;color:var(--text2);border-bottom:1px solid var(--border);background:rgba(255,255,255,.01)}
+  tbody td:first-child{font-weight:600;color:var(--text)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:rgba(255,214,0,.03)}
+
+  /* ── CTA ── */
+  .cta-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--bg);padding:16px 40px;border-radius:100px;font-size:1.1rem;font-weight:800;text-decoration:none;transition:all .3s;border:none;cursor:pointer;margin-top:24px}
+  .cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,214,0,.3)}
+
+  /* ── Print ── */
+  @media print{
+    body{overflow:visible;height:auto;width:auto;background:#fff;color:#111}
+    .bg-glow,.progress,.slide-num,.nav-dots,.nav-hint,.logo-fixed{display:none!important}
+    .slide{display:flex!important;position:relative!important;page-break-after:always;min-height:100vh;padding:40px 60px;background:#fff}
+    .slide .inner{opacity:1!important;transform:none!important}
+    :root{--gold:#B8860B;--bg:#fff;--surface:#f5f5f5;--surface2:#eee;--border:#ddd;--border2:#B8860B;--text:#111;--text2:#444;--text3:#888}
+    .stat-card .val{-webkit-text-fill-color:#B8860B;color:#B8860B}
+    .cta-btn{background:#B8860B;color:#fff}
+    h1{font-size:3.5rem}h2{font-size:2rem}
+    .demo-preview{height:120px}
+  }
+
+  @media(max-width:1024px){
+    .slide{padding:30px 40px}
+    h1{font-size:2.8rem}h2{font-size:1.8rem}
+    .grid-3,.grid-4{grid-template-columns:1fr}
+    .grid-2{grid-template-columns:1fr}
+    .flow{gap:8px}.flow-arrow{display:none}
+    .demo-preview{height:120px}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow g1"></div>
+<div class="bg-glow g2"></div>
+<div class="bg-glow g3"></div>
+<div class="progress" id="progress"></div>
+<div class="slide-num" id="slideNum"></div>
+<div class="nav-dots" id="navDots"></div>
+<div class="nav-hint">&larr; &rarr; nyilak &nbsp;|&nbsp; kattints &nbsp;|&nbsp; swipe</div>
+<div class="logo-fixed"><span>Scroll</span> Studio</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 1: HERO — 0 Ft -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide active">
+  <div class="inner" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+    <div class="section-label">Ajánlat &middot; Batthány Kastélyszálló</div>
+    <h1 style="font-size:5rem">Új weboldal.<br><span class="accent" style="font-size:6.5rem">0 Ft.</span><br>Egy évig.</h1>
+    <div class="sep"></div>
+    <p class="lead" style="text-align:center;margin-top:8px">Teljes weboldal-fejlesztés, ingyenes fenntartás, és e-mail marketing rendszer &mdash; kockázat nélkül.</p>
+    <div style="margin-top:40px;font-size:.85rem;color:var(--text3)">Scroll Studio Kft. &middot; 2026. március</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 2: MIT KAPNAK -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide left-align">
+  <div class="inner">
+    <div class="section-label">Az ajánlat</div>
+    <h2>Mit kap a <span class="accent">Batthány Kastélyszálló</span>?</h2>
+    <div class="grid-4" style="margin-top:24px;max-width:1200px">
+      <div class="card">
+        <span class="card-icon">🌐</span>
+        <h3>Új weboldal</h3>
+        <p>Teljes arculatváltás, modern dizájn, <strong>3 aldomain</strong> (kastély, wellness, golf). Mobilra optimalizált, saját foglalási felülettel.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <h3>1 év ingyenes fenntartás</h3>
+        <p><strong>0 Ft üzemeltetési költség</strong> 12 hónapon keresztül. Hosting, domain, technikai háttér &mdash; minden benne van.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <h3>Frissítések 2 héten belül</h3>
+        <p>Bármilyen tartalmi vagy vizuális módosítás <strong>72 órán belül (max. 7 munkanap)</strong> alatt elkészül. Nem kell várni heteket.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📧</span>
+        <h3>E-mail marketing</h3>
+        <p>Megkeressük az <strong>összes korábbi vendéget</strong> kedvező ajánlatokkal. Automatikus utánkövetés, voucher rendszer &mdash; <strong>csak sikerdíjon.</strong></p>
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:24px;max-width:1200px">
+      <p><strong>Összekötjük a foglalási rendszerükkel.</strong> A vendégek közvetlenül az Önök weboldalán foglalhatnak &mdash; bankkártyával, SZÉP kártyával, Apple Pay-jel. Az e-mail marketing rendszerrel pedig folyamatosan visszahozzuk a korábbi vendégeket kedvező ajánlatokkal.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 3: 3 ALTERNATÍV WEBOLDAL -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="inner" style="display:flex;flex-direction:column;align-items:center">
+    <div class="section-label">Weboldal dizájn</div>
+    <h2>Három <span class="accent">koncepció</span> &mdash; Önök választanak</h2>
+    <p class="lead" style="text-align:center;margin-bottom:30px">Elkészítettünk három különböző vizuális irányt. Kattintson bármelyikre az élő előnézet megtekintéséhez.</p>
+
+    <div class="grid-3" style="max-width:1100px">
+      <a class="demo-card" href="{{DEMO_LINK_1}}" target="_blank" rel="noopener">
+        <div class="demo-preview">🏰</div>
+        <div class="demo-body">
+          <h3>A verzió — Elegáns Klasszikus</h3>
+          <p>Visszafogott, prémium megjelenés. Arany és krémszín dominancia, nagy képek, letisztult tipográfia.</p>
+          <div class="demo-cta">Megnézem élőben</div>
+        </div>
+      </a>
+      <a class="demo-card" href="{{DEMO_LINK_2}}" target="_blank" rel="noopener">
+        <div class="demo-preview">🌿</div>
+        <div class="demo-body">
+          <h3>B verzió — Természetközeli</h3>
+          <p>Zöld és natúr tónusok, wellness-fókusz, fotóközpontú. A természet és a nyugalom érzését közvetíti.</p>
+          <div class="demo-cta">Megnézem élőben</div>
+        </div>
+      </a>
+      <a class="demo-card" href="{{DEMO_LINK_3}}" target="_blank" rel="noopener">
+        <div class="demo-preview">✨</div>
+        <div class="demo-body">
+          <h3>C verzió — Modern Luxus</h3>
+          <p>Sötét háttér, arany akcentusok, animált elemek. Exkluzív, high-end érzés, fiatalabb célcsoportnak.</p>
+          <div class="demo-cta">Megnézem élőben</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 4: EMAIL MARKETING — HOGYAN MŰKÖDIK -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide left-align">
+  <div class="inner">
+    <div class="section-label">E-mail marketing</div>
+    <h2>Hogyan hozzuk <span class="accent">vissza a vendégeket</span>?</h2>
+
+    <div class="flow" style="max-width:1000px;margin:30px auto 0">
+      <div class="flow-step">
+        <div class="flow-icon">📋</div>
+        <div class="flow-label"><strong>Vendéglista</strong>Meglévő kontaktok importálása</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">📧</div>
+        <div class="flow-label"><strong>Személyre szabott ajánlat</strong>Szezonális kedvezmények, csomagok</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">📅</div>
+        <div class="flow-label"><strong>Foglalás</strong>Közvetlenül az Önök weboldalán</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">💌</div>
+        <div class="flow-label"><strong>Utánkövetés</strong>Köszönőüzenet, voucher, visszahívás</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon">🔄</div>
+        <div class="flow-label"><strong>Visszatérő vendég</strong>A kör újraindul</div>
+      </div>
+    </div>
+
+    <div style="max-width:700px;margin:40px auto 0">
+      <h3 style="text-align:left">Jutalék-összehasonlítás</h3>
+      <div class="compare-bar">
+        <div class="bar-label">Booking.com</div>
+        <div class="bar-track"><div class="bar-fill old" style="width:75%">12-15%</div></div>
+      </div>
+      <div class="compare-bar">
+        <div class="bar-label">Scroll Studio</div>
+        <div class="bar-track"><div class="bar-fill new" style="width:45%">9%</div></div>
+      </div>
+      <div class="compare-bar">
+        <div class="bar-label">Fenntartási díj</div>
+        <div class="bar-track"><div class="bar-fill zero" style="width:5%">0 Ft</div></div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:20px;max-width:700px;margin-left:auto;margin-right:auto">
+      <p><strong>Ha nincs eredmény, nincs költség.</strong> Az e-mail marketing rendszert ingyenesen építjük ki. Kizárólag a ténylegesen beérkező foglalások után számítunk fel 9% sikerdíjat. Semmi más.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 5: FIZETÉSI KONSTRUKCIÓ -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide left-align">
+  <div class="inner">
+    <div class="section-label">Fizetési konstrukció</div>
+    <h2>Részletes <span class="accent">költségkalkuláció</span></h2>
+    <p class="lead" style="margin-bottom:24px">Átlátható, kiszámítható. Nincs rejtett költség, nincs apró betű.</p>
+
+    <div class="grid-2" style="max-width:1200px">
+      <div>
+        <h3 style="color:var(--red)">Piaci átlag (szálláshelyek)</h3>
+        <table>
+          <thead><tr><th>Tétel</th><th>Költség</th></tr></thead>
+          <tbody>
+            <tr><td>Weboldal fenntartás (havi)</td><td style="color:var(--red);font-weight:700">150–350.000 Ft/hó</td></tr>
+            <tr><td>Weboldal fenntartás (éves)</td><td style="color:var(--red);font-weight:700">1,8–4,2M Ft/év</td></tr>
+            <tr><td>Közvetítői jutalék (Booking stb.)</td><td style="color:var(--red);font-weight:700">12-15% / foglalás</td></tr>
+            <tr><td>E-mail marketing</td><td>Általában nincs</td></tr>
+            <tr><td>Frissítési idő</td><td>Hetekig tart</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3 style="color:var(--green)">Nálunk</h3>
+        <table>
+          <thead><tr><th>Tétel</th><th>Költség</th></tr></thead>
+          <tbody>
+            <tr><td>Weboldal fenntartás (havi)</td><td style="color:var(--green);font-weight:700">0 Ft/hó (1 évig)</td></tr>
+            <tr><td>Weboldal fenntartás (éves)</td><td style="color:var(--green);font-weight:700">0 Ft (1 évig)</td></tr>
+            <tr><td>E-mail sikerdíj</td><td style="color:var(--gold);font-weight:700">9% / foglalás</td></tr>
+            <tr><td>E-mail marketing rendszer</td><td style="color:var(--green);font-weight:700">Ingyenes</td></tr>
+            <tr><td>Frissítési idő</td><td style="color:var(--green);font-weight:700">72 órán belül (max. 7 munkanap)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="margin-top:30px;max-width:1200px">
+      <h3>Weboldal fejlesztés ára</h3>
+      <table>
+        <thead><tr><th>Részlet</th><th>Mikor esedékes</th><th>Összeg</th></tr></thead>
+        <tbody>
+          <tr><td>1. részlet</td><td>Szerződéskötéskor</td><td style="color:var(--gold);font-weight:700">1.000.000 Ft + ÁFA</td></tr>
+          <tr><td>2. részlet</td><td>Weboldal átadásakor</td><td style="color:var(--gold);font-weight:700">1.000.000 Ft + ÁFA</td></tr>
+          <tr><td>3. részlet</td><td>Marketing rendszer élesítésekor</td><td style="color:var(--gold);font-weight:700">950.000 Ft + ÁFA</td></tr>
+          <tr><td style="color:var(--gold)"><strong>Összesen</strong></td><td></td><td style="color:var(--gold);font-weight:900">2.950.000 Ft + ÁFA</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-3" style="margin-top:30px;max-width:1200px">
+      <div class="stat-card">
+        <div class="val">0 Ft</div>
+        <div class="lbl">Fenntartás 1 évig</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">1,8-4,2M</div>
+        <div class="lbl">Piaci fenntartási költség / év</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">3-6%</div>
+        <div class="lbl">Megtakarítás foglalásonként</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px;max-width:1200px">
+      <p><strong>Miért éri meg?</strong> Egy átlagos szálláshely évi 1,8&ndash;4,2 millió forintot fizet weboldal-fenntartásra. Nálunk ez <strong>1 évig 0 Ft</strong> &mdash; tehát a weboldal fejlesztési költsége már az első évben gyakorlatilag visszajön a fenntartási megtakarításból. Ráadásul az e-mail marketing rendszer <strong>aktívan hoz is bevételt</strong>, ami plusz profit.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 6: KÖVETKEZŐ LÉPÉS -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="inner" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+    <div class="section-label">Következő lépés</div>
+    <h1 style="font-size:3.8rem">Beszéljünk <span class="accent">személyesen.</span></h1>
+    <div class="sep"></div>
+    <p class="lead" style="text-align:center;max-width:600px">Szívesen bemutatjuk az elkészült koncepciókat személyesen &mdash; akár Budapesten, akár Zalacsányban, az Önök számára kényelmesebb helyszínen.</p>
+
+    <div style="display:flex;gap:24px;margin-top:40px;flex-wrap:wrap;justify-content:center">
+      <div class="stat-card" style="min-width:220px">
+        <div class="val" style="font-size:1.8rem">📍</div>
+        <div class="lbl">Budapest vagy Zalacsány</div>
+      </div>
+      <div class="stat-card" style="min-width:220px">
+        <div class="val" style="font-size:1.8rem">📧</div>
+        <div class="lbl">Válaszoljon erre az e-mailre</div>
+      </div>
+      <div class="stat-card" style="min-width:220px">
+        <div class="val" style="font-size:1.8rem">⏱️</div>
+        <div class="lbl">30 perc az Önök idejéből</div>
+      </div>
+    </div>
+
+    <p style="font-size:1.1rem;color:var(--text2);margin-top:40px;font-weight:300">Egy rövid megbeszélésen átbeszéljük a részleteket, kiválasztjuk a kedvenc dizájnt,<br>és máris elkezdjük az építkezést.</p>
+
+    <div style="margin-top:50px">
+      <div class="section-label">Scroll Studio Kft.</div>
+      <p style="font-size:.85rem;color:var(--text3)">Marketing &middot; Webfejlesztés &middot; Tartalomgyártás</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const progress=document.getElementById('progress');
+const slideNum=document.getElementById('slideNum');
+const navDots=document.getElementById('navDots');
+let cur=0;
+
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=(e)=>{e.stopPropagation();go(i)};
+  navDots.appendChild(d);
+});
+
+function go(n){
+  if(n<0||n>=slides.length)return;
+  slides[cur].classList.remove('active');
+  navDots.children[cur].classList.remove('active');
+  cur=n;
+  slides[cur].classList.add('active');
+  navDots.children[cur].classList.add('active');
+  progress.style.width=((cur+1)/slides.length*100)+'%';
+  slideNum.textContent=(cur+1)+' / '+slides.length;
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(cur+1)}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1)}
+  else if(e.key==='Home')go(0);
+  else if(e.key==='End')go(slides.length-1);
+  else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+});
+
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX});
+document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)d>0?go(cur+1):go(cur-1)});
+
+document.addEventListener('click',e=>{
+  if(e.target.closest('.nav-dots,.card,.stat-card,.demo-card,.pillar-card'))return;
+  e.clientX>window.innerWidth/2?go(cur+1):go(cur-1);
+});
+
+go(0);
+</script>
+</body>
+</html>
