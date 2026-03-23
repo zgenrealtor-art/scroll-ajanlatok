@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BV Tempó Kft. × Scroll Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --gold:#FFD600;--gold2:#FFC107;--gold-glow:rgba(255,214,0,.15);
+    --bg:#08080a;--surface:#111114;--surface2:#1a1a1f;--surface3:#222228;
+    --border:rgba(255,255,255,.06);--border2:rgba(255,214,0,.2);
+    --text:#e8e8ec;--text2:#a0a0a8;--text3:#666;
+    --green:#34d399;--red:#f87171;--blue:#60a5fa;
+    --orange:#fb923c;
+  }
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;width:100vw}
+
+  .slide{display:none;flex-direction:column;justify-content:center;align-items:center;
+    min-height:100vh;width:100vw;padding:50px 70px;position:absolute;top:0;left:0}
+  .slide.active{display:flex}
+  .slide .inner{opacity:0;transform:translateY(20px);transition:all .6s cubic-bezier(.16,1,.3,1)}
+  .slide.active .inner{opacity:1;transform:translateY(0)}
+  .slide.left-align{align-items:flex-start}
+  .slide.left-align .inner{width:100%;max-width:1300px}
+
+  .bg-glow{position:fixed;border-radius:50%;filter:blur(120px);opacity:.07;pointer-events:none;z-index:0}
+  .bg-glow.g1{width:600px;height:600px;background:var(--gold);top:-200px;right:-100px;animation:float1 20s ease-in-out infinite}
+  .bg-glow.g2{width:400px;height:400px;background:#6366f1;bottom:-150px;left:-100px;animation:float2 25s ease-in-out infinite}
+  .bg-glow.g3{width:300px;height:300px;background:var(--gold);bottom:20%;right:10%;animation:float3 18s ease-in-out infinite}
+  @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(-80px,60px)}}
+  @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,-40px)}}
+  @keyframes float3{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-60px)}}
+
+  .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s cubic-bezier(.16,1,.3,1);z-index:200}
+  .slide-num{position:fixed;bottom:24px;right:32px;font-size:13px;color:var(--text3);z-index:200;font-weight:500;letter-spacing:1px}
+  .nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:200}
+  .nav-dots .dot{width:8px;height:8px;border-radius:50%;background:var(--text3);opacity:.3;cursor:pointer;transition:all .3s}
+  .nav-dots .dot.active{background:var(--gold);opacity:1;transform:scale(1.3)}
+  .nav-hint{position:fixed;bottom:24px;left:32px;font-size:11px;color:var(--text3);z-index:200;opacity:.4}
+  .logo-fixed{position:fixed;top:24px;left:32px;font-size:14px;font-weight:700;color:var(--text3);z-index:200;letter-spacing:1px;opacity:.5}
+  .logo-fixed span{color:var(--gold)}
+
+  h1{font-size:4.5rem;font-weight:900;line-height:1.05;letter-spacing:-.03em}
+  h2{font-size:2.6rem;font-weight:800;margin-bottom:10px;line-height:1.15;letter-spacing:-.02em}
+  h3{font-weight:700;margin-bottom:12px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-size:.85rem}
+  .accent{color:var(--gold)}
+  .dim{color:var(--text3)}
+  .section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--gold);margin-bottom:20px;opacity:.8}
+  p.lead{font-size:1.2rem;line-height:1.7;font-weight:300;color:var(--text2);max-width:700px}
+  .sep{width:80px;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));margin:20px auto;border-radius:4px}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:40px;width:100%}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;width:100%}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;width:100%}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;position:relative;overflow:hidden;transition:all .3s}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .3s}
+  .card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+  .card:hover::before{opacity:1}
+  .card-icon{font-size:2rem;margin-bottom:16px;display:block}
+  .card h3{margin-bottom:10px}
+  .card p{font-size:.9rem;color:var(--text2);line-height:1.6}
+
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px;text-align:center;position:relative;overflow:hidden}
+  .stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--gold);opacity:.4}
+  .stat-card .val{font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+  .stat-card .lbl{font-size:.8rem;color:var(--text3);margin-top:8px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+
+  .highlight{background:linear-gradient(135deg,rgba(255,214,0,.06),rgba(255,214,0,.02));border:1px solid var(--border2);border-left:4px solid var(--gold);padding:20px 24px;border-radius:0 16px 16px 0;margin:20px 0}
+  .highlight p{font-size:1rem;color:var(--text);font-weight:400;line-height:1.6;max-width:none}
+
+  .tag{display:inline-block;background:var(--gold-glow);color:var(--gold);padding:6px 16px;border-radius:100px;font-size:.78rem;font-weight:600;margin:0 6px 8px 0;border:1px solid rgba(255,214,0,.15)}
+
+  .compare-bar{display:flex;align-items:center;margin:12px 0;gap:12px}
+  .compare-bar .bar-label{font-size:.85rem;font-weight:600;color:var(--text);min-width:200px}
+  .compare-bar .bar-track{flex:1;height:32px;background:var(--surface2);border-radius:16px;overflow:hidden;position:relative}
+  .compare-bar .bar-fill{height:100%;border-radius:16px;display:flex;align-items:center;justify-content:flex-end;padding-right:14px;font-size:.8rem;font-weight:700;transition:width 1.2s ease}
+  .compare-bar .bar-fill.old{background:linear-gradient(90deg,#dc2626,var(--red));color:#fff}
+  .compare-bar .bar-fill.new{background:linear-gradient(90deg,var(--gold),var(--gold2));color:var(--bg)}
+  .compare-bar .bar-fill.green{background:linear-gradient(90deg,var(--green),#059669);color:#fff}
+  .compare-bar .bar-fill.dim{background:linear-gradient(90deg,var(--surface3),var(--text3));color:#fff}
+
+  .flow{display:flex;align-items:center;gap:0;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  .flow-step{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:140px;max-width:180px}
+  .flow-icon{width:56px;height:56px;border-radius:50%;background:var(--surface);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:10px}
+  .flow-label{font-size:.8rem;color:var(--text2);line-height:1.4}
+  .flow-label strong{color:var(--text);display:block;font-size:.85rem}
+  .flow-arrow{font-size:1.5rem;color:var(--gold);margin:0 8px;opacity:.5;align-self:center;padding-bottom:30px}
+
+  table{width:100%;border-collapse:separate;border-spacing:0;margin-top:16px}
+  thead th{text-align:left;padding:12px 16px;font-size:.75rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:2px;border-bottom:2px solid var(--border2);background:var(--surface)}
+  thead th:first-child{border-radius:12px 0 0 0}thead th:last-child{border-radius:0 12px 0 0}
+  tbody td{padding:14px 16px;font-size:.95rem;color:var(--text2);border-bottom:1px solid var(--border);background:rgba(255,255,255,.01)}
+  tbody td:first-child{font-weight:600;color:var(--text)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover td{background:rgba(255,214,0,.03)}
+
+  .cta-btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--bg);padding:16px 40px;border-radius:100px;font-size:1.1rem;font-weight:800;text-decoration:none;transition:all .3s;border:none;cursor:pointer;margin-top:24px}
+  .cta-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,214,0,.3)}
+
+  .status-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+  .status-dot.green{background:var(--green)}
+  .status-dot.red{background:var(--red)}
+  .status-dot.orange{background:var(--orange)}
+
+  @media print{
+    body{overflow:visible;height:auto;width:auto;background:#fff;color:#111}
+    .bg-glow,.progress,.slide-num,.nav-dots,.nav-hint,.logo-fixed{display:none!important}
+    .slide{display:flex!important;position:relative!important;page-break-after:always;min-height:100vh;padding:40px 60px;background:#fff}
+    .slide .inner{opacity:1!important;transform:none!important}
+    :root{--gold:#B8860B;--bg:#fff;--surface:#f5f5f5;--surface2:#eee;--border:#ddd;--border2:#B8860B;--text:#111;--text2:#444;--text3:#888}
+    .stat-card .val{-webkit-text-fill-color:#B8860B;color:#B8860B}
+    .cta-btn{background:#B8860B;color:#fff}
+    h1{font-size:3.5rem}h2{font-size:2rem}
+  }
+
+  @media(max-width:1024px){
+    .slide{padding:30px 40px}
+    h1{font-size:2.8rem}h2{font-size:1.8rem}
+    .grid-3,.grid-4{grid-template-columns:1fr 1fr}
+    .grid-2{grid-template-columns:1fr}
+    .flow{gap:8px}.flow-arrow{display:none}
+    .compare-bar .bar-label{min-width:120px;font-size:.75rem}
+    table{font-size:.85rem}
+    thead th{padding:8px 10px;font-size:.65rem}
+    tbody td{padding:10px;font-size:.82rem}
+  }
+  @media(max-width:640px){
+    .slide{padding:20px 20px}
+    h1{font-size:2rem}h2{font-size:1.4rem}
+    p.lead{font-size:1rem}
+    .section-label{font-size:.6rem;letter-spacing:2px}
+    .grid-3,.grid-4,.grid-2{grid-template-columns:1fr}
+    .card{padding:20px}
+    .card-icon{font-size:1.6rem;margin-bottom:10px}
+    .stat-card{padding:20px}
+    .stat-card .val{font-size:2.2rem}
+    .stat-card .lbl{font-size:.7rem}
+    .compare-bar{flex-direction:column;align-items:stretch;gap:4px}
+    .compare-bar .bar-label{min-width:auto;font-size:.8rem}
+    .compare-bar .bar-track{height:28px}
+    .flow-step{min-width:100px;max-width:140px}
+    .flow-icon{width:44px;height:44px;font-size:1.2rem}
+    .flow-label{font-size:.7rem}
+    .flow-label strong{font-size:.75rem}
+    table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    thead th{padding:8px;font-size:.6rem;white-space:nowrap}
+    tbody td{padding:8px;font-size:.78rem;white-space:nowrap}
+    .highlight{padding:14px 16px}
+    .highlight p{font-size:.88rem}
+    .tag{font-size:.7rem;padding:4px 10px}
+    .nav-hint{display:none}
+    .logo-fixed{font-size:12px;top:16px;left:16px}
+    .slide-num{bottom:16px;right:16px;font-size:11px}
+    .nav-dots{right:12px;gap:6px}
+    .nav-dots .dot{width:6px;height:6px}
+    .cta-btn{padding:14px 28px;font-size:1rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow g1"></div>
+<div class="bg-glow g2"></div>
+<div class="bg-glow g3"></div>
+<div class="progress" id="progress"></div>
+<div class="slide-num" id="slideNum"></div>
+<div class="nav-dots" id="navDots"></div>
+<div class="nav-hint">&#8592; &#8594; nyilak &nbsp;|&nbsp; kattints &nbsp;|&nbsp; swipe</div>
+<div class="logo-fixed"><span>Scroll</span> Studio</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 1: HERO -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide active">
+  <div class="inner" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+    <div class="section-label">Partners&#233;g &#183; 2026. m&#225;rcius</div>
+    <h1>BV Temp&#243; Kft.<br><span class="accent">&#215;</span><br>Scroll Studio</h1>
+    <div class="sep"></div>
+    <p class="lead" style="text-align:center;margin-top:8px">30 &#233;v offline szaktud&#225;s &#8212; online l&#225;that&#243;s&#225;gg&#225; alak&#237;tva.<br>Csal&#225;di v&#225;llalkoz&#225;sok digit&#225;lis partnere.</p>
+    <div style="margin-top:40px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+      <span class="tag">Marketing</span>
+      <span class="tag">Webfejleszt&#233;s</span>
+      <span class="tag">Tartalomgy&#225;rt&#225;s</span>
+      <span class="tag">Google Ads</span>
+    </div>
+    <div style="margin-top:40px;font-size:.85rem;color:var(--text3)">Scroll Studio Kft. &#183; Budapest</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 2: JELENLEGI ÁLLAPOT -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide left-align">
+  <div class="inner">
+    <div class="section-label">Jelenlegi helyzet</div>
+    <h2>Hol tart most a <span class="accent">BV Temp&#243;</span>?</h2>
+    <p class="lead" style="margin-bottom:24px">Felt&#233;rk&#233;pezt&#252;k az online jelenl&#233;t&#252;ket &#8212; er&#337;s alapok vannak, de a potenci&#225;l nagy r&#233;sze kihasznl&#225;latlan.</p>
+
+    <div class="grid-3" style="max-width:1200px">
+      <div class="card">
+        <span class="card-icon">&#127760;</span>
+        <h3><span class="status-dot green"></span>Weboldal</h3>
+        <p>Modern design, SEO alapok megvannak, schema.org strukt&#250;ra. <strong>J&#243; alap</strong> &#8212; erre lehet &#233;p&#237;teni.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128269;</span>
+        <h3><span class="status-dot red"></span>Google Ads</h3>
+        <p>Jelenleg <strong>nincs hirdet&#233;si kamp&#225;ny</strong>. A legmagasabb sz&#225;nd&#233;k&#250; keres&#233;sekre (homok sz&#225;ll&#237;t&#225;s, t&#252;z&#233;p) senki nem hirdet a k&#246;zelben.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128241;</span>
+        <h3><span class="status-dot orange"></span>Social Media</h3>
+        <p>Facebook oldal l&#233;tezik, de <strong>akt&#237;v tartalomstrat&#233;gia hi&#225;nyzik</strong>. Instagram nincs. Rendszeres posztol&#225;s sz&#252;ks&#233;ges.</p>
+      </div>
+    </div>
+
+    <div class="grid-3" style="max-width:1200px;margin-top:16px">
+      <div class="card">
+        <span class="card-icon">&#128205;</span>
+        <h3><span class="status-dot orange"></span>Google Maps</h3>
+        <p>C&#233;gadatok megtal&#225;lhat&#243;k, de a <strong>profil nincs optimaliz&#225;lva</strong>. Kev&#233;s &#233;rt&#233;kel&#233;s, hi&#225;nyz&#243; fot&#243;k, nincs rendszeres bejegyz&#233;s.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#11088;</span>
+        <h3><span class="status-dot red"></span>&#201;rt&#233;kel&#233;sek</h3>
+        <p><strong>50+ Google &#233;rt&#233;kel&#233;s sz&#252;ks&#233;ges</strong> 4,5+ &#225;tlaggal a versenyhez. Most ez hi&#225;nyzik &#8212; pedig ingyenes bizalom&#233;p&#237;t&#337;.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128200;</span>
+        <h3><span class="status-dot red"></span>Lead gener&#225;l&#225;s</h3>
+        <p>Nincs m&#233;rhet&#337; online leadforr&#225;s. Az &#250;j vev&#337;k <strong>szem&#233;lyes aj&#225;nl&#225;sb&#243;l &#233;s bet&#233;r&#337; forgalomb&#243;l</strong> j&#246;nnek &#8212; ez nem sk&#225;l&#225;zhat&#243;.</p>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:20px;max-width:1200px">
+      <p><strong>&#214;sszefoglalva:</strong> A weboldal j&#243; alap, de egyed&#252;l nem hoz &#250;j vev&#337;ket. A Google Ads, Social Media &#233;s Google Maps a h&#225;rom ter&#252;let, ahol azonnali eredm&#233;nyt lehet el&#233;rni.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 3: PIACI LEHETŐSÉG -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide left-align">
+  <div class="inner">
+    <div class="section-label">Piaci lehet&#337;s&#233;g</div>
+    <h2>Mi&#233;rt <span class="accent">most</span> &#233;rdemes l&#233;pni?</h2>
+
+    <div class="grid-4" style="margin-top:24px;max-width:1200px">
+      <div class="stat-card">
+        <div class="val">+37%</div>
+        <div class="lbl">Lak&#225;s&#233;p&#237;t&#233;si enged&#233;lyek n&#246;veked&#233;se</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">2-3%</div>
+        <div class="lbl">&#201;p&#237;t&#337;ipari termel&#233;sn&#246;veked&#233;s</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">1.000+</div>
+        <div class="lbl">Havi keres&#233;s: &#8222;t&#252;z&#233;p Budapest&#8221;</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">0</div>
+        <div class="lbl">XXII. ker. t&#252;z&#233;p aki online hirdet</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:30px;max-width:1200px">
+      <div>
+        <h3>N&#246;vekv&#337; kereslet</h3>
+        <p class="lead" style="font-size:1rem">Az <strong>Otthon Start Program</strong> &#233;s az &#233;p&#237;t&#233;si enged&#233;lyek 37%-os ugr&#225;sa &#250;j &#233;p&#237;tkez&#233;seket gener&#225;l &#8212; k&#252;l&#246;n&#246;sen Budapest agglomer&#225;ci&#243;j&#225;ban. Ezek az &#233;p&#237;tkez&#337;k online keresnek anyagot.</p>
+        <div style="margin-top:16px">
+          <div class="compare-bar">
+            <div class="bar-label">Havi keres&#337;k</div>
+            <div class="bar-track"><div class="bar-fill new" style="width:70%">1.000+ f&#337;</div></div>
+          </div>
+          <div class="compare-bar">
+            <div class="bar-label">Helyi versenyt&#225;rs online</div>
+            <div class="bar-track"><div class="bar-fill dim" style="width:5%">0</div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3>Top keres&#233;sek (havi)</h3>
+        <table>
+          <thead><tr><th>Kulcssz&#243;</th><th>Keres&#233;s / h&#243;</th></tr></thead>
+          <tbody>
+            <tr><td>t&#252;z&#233;p budapest</td><td style="color:var(--gold);font-weight:700">1.000&#8211;2.500</td></tr>
+            <tr><td>homok sz&#225;ll&#237;t&#225;s budapest</td><td style="color:var(--gold);font-weight:700">500&#8211;1.000</td></tr>
+            <tr><td>kavics sz&#225;ll&#237;t&#225;s</td><td>400&#8211;800</td></tr>
+            <tr><td>t&#369;zifa rendel&#233;s budapest</td><td>300&#8211;600</td></tr>
+            <tr><td>s&#243;der &#225;r budapest</td><td>150&#8211;400</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:20px;max-width:1200px">
+      <p><strong>Az ablak most van nyitva.</strong> A XXII. ker&#252;leti t&#252;z&#233;pek k&#246;z&#252;l egyiknek sincs akt&#237;v online hirdet&#233;se. Aki el&#337;sz&#246;r l&#233;p, az &#233;p&#237;ti ki az online dominanci&#225;t &#8212; &#233;s a t&#246;bbiek m&#225;r csak k&#246;vetni tudnak.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 4: AMIT KÍNÁLUNK -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide left-align">
+  <div class="inner">
+    <div class="section-label">Scroll Studio szolg&#225;ltat&#225;sok</div>
+    <h2>Amit <span class="accent">k&#237;n&#225;lunk</span></h2>
+    <p class="lead" style="margin-bottom:24px">Nem egyszer&#369;en &#8222;marketing&#8221;-et adunk &#8212; m&#233;rhet&#337; &#250;jvev&#337;-szerz&#233;st. Mindent mi csin&#225;lunk, &#214;n&#246;k csak a telefont veszik fel.</p>
+
+    <div class="grid-3" style="max-width:1200px">
+      <div class="card">
+        <span class="card-icon">&#128269;</span>
+        <h3>Google Ads kamp&#225;nyok</h3>
+        <p>Azonnali megjelen&#233;s a <strong>legmagasabb sz&#225;nd&#233;k&#250; keres&#233;sekre</strong>: &#8222;t&#252;z&#233;p budapest&#8221;, &#8222;homok sz&#225;ll&#237;t&#225;s&#8221;. Aki keres, az venni akar &#8212; mi oda tessz&#252;k &#214;n&#246;ket.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128205;</span>
+        <h3>Google Maps optimaliz&#225;l&#225;s</h3>
+        <p><strong>Ingyenes platform, hatalmas hat&#225;s.</strong> Profil optimaliz&#225;l&#225;s, &#233;rt&#233;kel&#233;s-gy&#369;jt&#233;s strat&#233;gia, heti bejegyz&#233;sek. A &#8222;t&#252;z&#233;p a k&#246;zelben&#8221; keres&#233;sek itt d&#337;lnek el.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128247;</span>
+        <h3>Social Media kezel&#233;s</h3>
+        <p>Heti 3-4 poszt <strong>Facebook &#233;s Instagram</strong>-on. Telephely fot&#243;k, term&#233;k bemutat&#243;k, sz&#225;ll&#237;t&#225;s vide&#243;k, szezon&#225;lis akci&#243;k. Hirdet&#233;ssel megt&#225;mogatva.</p>
+      </div>
+    </div>
+    <div class="grid-3" style="max-width:1200px;margin-top:16px">
+      <div class="card">
+        <span class="card-icon">&#128218;</span>
+        <h3>SEO tartalomgy&#225;rt&#225;s</h3>
+        <p>Havi 2 blog cikk keres&#337;optimaliz&#225;lva: &#8222;Mennyi homok kell betonoz&#225;shoz?&#8221;, &#8222;S&#243;der vs kavics&#8221; &#8212; <strong>organikus forgalom, ami ingyen hoz vev&#337;ket</strong>.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#128202;</span>
+        <h3>Havi riport</h3>
+        <p>Minden h&#243;napban <strong>&#225;tl&#225;that&#243; riport</strong>: h&#225;ny megjelen&#233;s, h&#225;ny kattint&#225;s, h&#225;ny h&#237;v&#225;s j&#246;tt. Nincs &#8222;b&#246;rke alatt&#8221; &#8212; mindent l&#225;t.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">&#9889;</span>
+        <h3>Landing page-ek</h3>
+        <p>Dedik&#225;lt c&#233;loldalak a <strong>legfontosabb term&#233;kekre</strong>: homok sz&#225;ll&#237;t&#225;s, kavics rendel&#233;s, t&#369;zifa. Maxim&#225;lis konverzi&#243;: h&#237;v&#225;s vagy aj&#225;nlatk&#233;r&#233;s.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 5: VÁRHATÓ EREDMÉNYEK -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide left-align">
+  <div class="inner">
+    <div class="section-label">V&#225;rhat&#243; eredm&#233;nyek</div>
+    <h2>Mit hoz ez <span class="accent">sz&#225;mokban</span>?</h2>
+
+    <div class="grid-4" style="margin-top:24px;max-width:1200px">
+      <div class="stat-card">
+        <div class="val">30-80</div>
+        <div class="lbl">Havi &#250;j &#233;rdekl&#337;d&#337;</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">50+</div>
+        <div class="lbl">Google &#233;rt&#233;kel&#233;s 6 h&#243;nap alatt</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">5-10x</div>
+        <div class="lbl">Becs&#252;lt ROI (6 h&#243;nap)</div>
+      </div>
+      <div class="stat-card">
+        <div class="val">1.500+</div>
+        <div class="lbl">Havi weboldal l&#225;togat&#243;</div>
+      </div>
+    </div>
+
+    <div style="margin-top:30px;max-width:900px">
+      <h3>El&#337;tte / ut&#225;na</h3>
+      <div class="compare-bar">
+        <div class="bar-label">Online leadek / h&#243; (most)</div>
+        <div class="bar-track"><div class="bar-fill old" style="width:5%">~0</div></div>
+      </div>
+      <div class="compare-bar">
+        <div class="bar-label">Online leadek / h&#243; (3. h&#243;nap)</div>
+        <div class="bar-track"><div class="bar-fill new" style="width:40%">30&#8211;50</div></div>
+      </div>
+      <div class="compare-bar">
+        <div class="bar-label">Online leadek / h&#243; (6. h&#243;nap)</div>
+        <div class="bar-track"><div class="bar-fill new" style="width:70%">50&#8211;80</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;max-width:900px">
+      <div class="compare-bar">
+        <div class="bar-label">Google Maps megjelen&#233;s (most)</div>
+        <div class="bar-track"><div class="bar-fill old" style="width:8%">alacsony</div></div>
+      </div>
+      <div class="compare-bar">
+        <div class="bar-label">Google Maps megjelen&#233;s (6. h&#243;)</div>
+        <div class="bar-track"><div class="bar-fill green" style="width:55%">2.000+</div></div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:20px;max-width:900px">
+      <p><strong>Konzervat&#237;v becsl&#233;s:</strong> Ha havonta 50 &#233;rdekl&#337;d&#337;b&#337;l 25% v&#225;s&#225;rol, az &#225;tlagosan 80.000 Ft rendel&#233;si &#233;rt&#233;kkel <strong>havi 1 milli&#243; forint &#250;j bev&#233;tel</strong>. Az online marketing ennek t&#246;red&#233;k&#233;be ker&#252;l.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 6: VERSENYELŐNY -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide left-align">
+  <div class="inner">
+    <div class="section-label">Versenyel&#337;ny</div>
+    <h2>Aki <span class="accent">el&#337;sz&#246;r l&#233;p</span>, az nyer</h2>
+    <p class="lead" style="margin-bottom:24px">Megvizsg&#225;ltuk a XXII. ker&#252;leti &#233;s d&#233;l-budapesti &#233;p&#237;t&#337;anyag-kereskedelmek online jelenl&#233;t&#233;t.</p>
+
+    <table style="max-width:1100px">
+      <thead>
+        <tr>
+          <th>T&#233;nyez&#337;</th>
+          <th>BV Temp&#243;</th>
+          <th>STAVMAT</th>
+          <th>Helyi versenyt&#225;rs</th>
+          <th>homokszallitas.hu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Weboldal</td>
+          <td style="color:var(--green)">&#10003; Van, modern</td>
+          <td style="color:var(--green)">&#10003; Webshop</td>
+          <td style="color:var(--red)">&#10007; Nincs</td>
+          <td>Alap</td>
+        </tr>
+        <tr>
+          <td>Google Ads</td>
+          <td style="color:var(--red)">&#10007; Nincs</td>
+          <td style="color:var(--green)">&#10003; Van</td>
+          <td style="color:var(--red)">&#10007; Nincs</td>
+          <td style="color:var(--red)">&#10007; Nincs</td>
+        </tr>
+        <tr>
+          <td>Facebook aktivit&#225;s</td>
+          <td style="color:var(--orange)">&#9888; Gyenge</td>
+          <td>K&#246;zepes</td>
+          <td style="color:var(--red)">&#10007; Nincs</td>
+          <td style="color:var(--red)">&#10007; Nincs</td>
+        </tr>
+        <tr>
+          <td>Google &#233;rt&#233;kel&#233;sek</td>
+          <td style="color:var(--orange)">&#9888; Kev&#233;s</td>
+          <td style="color:var(--green)">&#10003; Sok</td>
+          <td style="color:var(--red)">&#10007; Nincs</td>
+          <td>K&#246;zepes</td>
+        </tr>
+        <tr>
+          <td>Szem&#233;lyes kiszolg&#225;l&#225;s</td>
+          <td style="color:var(--gold);font-weight:700">Kiv&#225;l&#243;</td>
+          <td>Gyenge</td>
+          <td style="color:var(--green)">J&#243;</td>
+          <td style="color:var(--red)">Nincs telep</td>
+        </tr>
+        <tr>
+          <td>30 &#233;v tapasztalat</td>
+          <td style="color:var(--gold);font-weight:700">&#10003; Igen</td>
+          <td>Orsz&#225;gos l&#225;nc</td>
+          <td>R&#233;szben</td>
+          <td>&#10007; Nem</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight" style="margin-top:24px;max-width:1100px">
+      <p><strong>A BV Temp&#243; egyedi er&#337;ss&#233;ge:</strong> 30 &#233;v szaktud&#225;s + szem&#233;lyes kiszolg&#225;l&#225;s + kis t&#233;telben is rugalmas + k&#233;t telephely. Ezt az er&#337;ss&#233;get kell online is l&#225;that&#243;v&#225; tenni. A helyi versenyt&#225;rsak <strong>egyik&#233;nek sincs online jelenl&#233;te</strong> &#8212; ez azonnali lehet&#337;s&#233;g.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 7: IMPLEMENTÁCIÓ -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="inner" style="display:flex;flex-direction:column;align-items:center">
+    <div class="section-label">Megval&#243;s&#237;t&#225;s</div>
+    <h2>4 f&#225;zis &#8212; <span class="accent">struktur&#225;lt fel&#233;p&#237;t&#233;s</span></h2>
+    <p class="lead" style="text-align:center;margin-bottom:30px">Nem kell mindent egyszerre. Fokozatosan, m&#233;rhet&#337; eredm&#233;nyekkel haladunk.</p>
+
+    <div class="flow" style="max-width:1100px">
+      <div class="flow-step">
+        <div class="flow-icon">&#128270;</div>
+        <div class="flow-label"><strong>1&#8211;2. h&#233;t</strong>Audit &amp; strat&#233;gia<br><span style="font-size:.7rem;color:var(--text3)">Google profil, Ads fi&#243;k, analitika</span></div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step">
+        <div class="flow-icon">&#128295;</div>
+        <div class="flow-label"><strong>1. h&#243;nap</strong>Indul&#225;s<br><span style="font-size:.7rem;color:var(--text3)">Els&#337; kamp&#225;nyok, social media ind&#237;t&#225;s</span></div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step">
+        <div class="flow-icon">&#9881;</div>
+        <div class="flow-label"><strong>2&#8211;3. h&#243;nap</strong>Optimaliz&#225;l&#225;s<br><span style="font-size:.7rem;color:var(--text3)">Kamp&#225;ny finomhangol&#225;s, landing page-ek</span></div>
+      </div>
+      <div class="flow-arrow">&#8594;</div>
+      <div class="flow-step">
+        <div class="flow-icon">&#128640;</div>
+        <div class="flow-label"><strong>4. h&#243;napt&#243;l</strong>Sk&#225;l&#225;z&#225;s<br><span style="font-size:.7rem;color:var(--text3)">B&#252;dzs&#233; n&#246;vel&#233;s, tartalom b&#337;v&#237;t&#233;s</span></div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:40px;max-width:1000px">
+      <div class="card">
+        <h3 style="color:var(--green)">Azonnali teend&#337;k (0 Ft)</h3>
+        <p>&#9989; Google Business Profile mindk&#233;t telephelyre<br>
+        &#9989; 20+ fot&#243; felt&#246;lt&#233;se<br>
+        &#9989; &#201;rt&#233;kel&#233;s-gy&#369;jt&#233;s megkezd&#233;se<br>
+        &#9989; Facebook oldal aktiv&#225;l&#225;sa</p>
+      </div>
+      <div class="card">
+        <h3>Els&#337; h&#243;nap</h3>
+        <p>&#128269; Google Ads els&#337; kamp&#225;nyok ind&#237;t&#225;sa<br>
+        &#128247; Social media posztol&#225;s megkezd&#233;se<br>
+        &#128218; Els&#337; blog cikk meg&#237;r&#225;sa<br>
+        &#128202; M&#233;r&#233;si rendszer be&#225;ll&#237;t&#225;sa</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SLIDE 8: KÖVETKEZŐ LÉPÉS -->
+<!-- ═══════════════════════════════════════════ -->
+<div class="slide">
+  <div class="inner" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+    <div class="section-label">K&#246;vetkez&#337; l&#233;p&#233;s</div>
+    <h1 style="font-size:3.8rem">&#201;p&#237;ts&#252;nk <span class="accent">egy&#252;tt.</span></h1>
+    <div class="sep"></div>
+    <p class="lead" style="text-align:center;max-width:600px">30 &#233;v szaktud&#225;s, online l&#225;that&#243;v&#225; alak&#237;tva.<br>A k&#246;vetkez&#337; l&#233;p&#233;s egyszer&#369; &#8212; &#233;s semmire nem k&#246;telez.</p>
+
+    <div style="display:flex;gap:24px;margin-top:40px;flex-wrap:wrap;justify-content:center">
+      <div class="stat-card" style="min-width:220px">
+        <div class="val" style="font-size:2.5rem">1</div>
+        <div class="lbl">Ingyenes audit</div>
+        <p style="font-size:.8rem;color:var(--text3);margin-top:8px">Felt&#233;rk&#233;pezz&#252;k a lehet&#337;s&#233;geket</p>
+      </div>
+      <div class="stat-card" style="min-width:220px">
+        <div class="val" style="font-size:2.5rem">2</div>
+        <div class="lbl">Szem&#233;lyre szabott aj&#225;nlat</div>
+        <p style="font-size:.8rem;color:var(--text3);margin-top:8px">Pontos terv &#233;s c&#233;lok</p>
+      </div>
+      <div class="stat-card" style="min-width:220px">
+        <div class="val" style="font-size:2.5rem">3</div>
+        <div class="lbl">Indul&#225;s</div>
+        <p style="font-size:.8rem;color:var(--text3);margin-top:8px">2 h&#233;ten bel&#252;l l&#225;that&#243; eredm&#233;nyek</p>
+      </div>
+    </div>
+
+    <div style="margin-top:50px">
+      <div class="section-label">Scroll Studio Kft.</div>
+      <p style="font-size:.85rem;color:var(--text3)">Marketing &#183; Webfejleszt&#233;s &#183; Tartalomgy&#225;rt&#225;s</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const progress=document.getElementById('progress');
+const slideNum=document.getElementById('slideNum');
+const navDots=document.getElementById('navDots');
+let cur=0;
+
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.onclick=(e)=>{e.stopPropagation();go(i)};
+  navDots.appendChild(d);
+});
+
+function go(n){
+  if(n<0||n>=slides.length)return;
+  slides[cur].classList.remove('active');
+  navDots.children[cur].classList.remove('active');
+  cur=n;
+  slides[cur].classList.add('active');
+  navDots.children[cur].classList.add('active');
+  progress.style.width=((cur+1)/slides.length*100)+'%';
+  slideNum.textContent=(cur+1)+' / '+slides.length;
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(cur+1)}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1)}
+  else if(e.key==='Home')go(0);
+  else if(e.key==='End')go(slides.length-1);
+  else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+});
+
+let tx=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX});
+document.addEventListener('touchend',e=>{const d=tx-e.changedTouches[0].clientX;if(Math.abs(d)>50)d>0?go(cur+1):go(cur-1)});
+
+document.addEventListener('click',e=>{
+  if(e.target.closest('.nav-dots,.card,.stat-card,.cta-btn'))return;
+  e.clientX>window.innerWidth/2?go(cur+1):go(cur-1);
+});
+
+go(0);
+</script>
+</body>
+</html>

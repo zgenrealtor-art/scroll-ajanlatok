@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Árajánlat — BV Tempó Kft. | Scroll Studio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --gold:#FFD600;--gold2:#FFC107;--gold-glow:rgba(255,214,0,.15);
+    --bg:#08080a;--surface:#111114;--surface2:#1a1a1f;
+    --border:rgba(255,255,255,.06);--border2:rgba(255,214,0,.2);
+    --text:#e8e8ec;--text2:#a0a0a8;--text3:#666;
+    --green:#34d399;
+  }
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+  .container{max-width:960px;margin:0 auto;padding:60px 40px}
+
+  /* Header */
+  .header{display:flex;justify-content:space-between;align-items:center;padding-bottom:40px;border-bottom:2px solid var(--border2);margin-bottom:40px}
+  .logo{font-size:1.4rem;font-weight:700;letter-spacing:1px;color:var(--text3)}
+  .logo span{color:var(--gold)}
+  .header-right{text-align:right;font-size:.85rem;color:var(--text3)}
+
+  /* Section */
+  .section{margin-bottom:48px}
+  .section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--gold);margin-bottom:16px;opacity:.8}
+  h1{font-size:2.8rem;font-weight:900;line-height:1.1;letter-spacing:-.02em;margin-bottom:8px}
+  h2{font-size:1.8rem;font-weight:800;margin-bottom:12px;line-height:1.2}
+  .accent{color:var(--gold)}
+  p.lead{font-size:1.1rem;line-height:1.7;font-weight:300;color:var(--text2);max-width:700px}
+  .sep{width:80px;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));margin:20px 0;border-radius:4px}
+
+  /* Client info */
+  .client-box{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:24px 28px;margin:24px 0}
+  .client-box h3{color:var(--gold);font-size:.85rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+  .client-box p{color:var(--text2);font-size:.95rem;margin:4px 0}
+  .client-box strong{color:var(--text)}
+
+  /* Packages grid */
+  .packages{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:24px}
+  .package{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;position:relative;overflow:hidden;transition:all .3s}
+  .package::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .3s}
+  .package:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+  .package:hover::before{opacity:1}
+  .package.featured{border-color:var(--border2)}
+  .package.featured::before{opacity:1}
+  .package-name{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+  .package-title{font-size:1.3rem;font-weight:800;margin-bottom:16px}
+  .package-desc{font-size:.85rem;color:var(--text2);margin-bottom:16px;line-height:1.5}
+  .package ul{list-style:none;padding:0}
+  .package li{font-size:.88rem;color:var(--text2);padding:6px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+  .package li:last-child{border-bottom:none}
+  .package li::before{content:'✓';color:var(--gold);font-weight:700;font-size:.9rem}
+  .badge{display:inline-block;background:var(--gold-glow);color:var(--gold);padding:4px 12px;border-radius:100px;font-size:.7rem;font-weight:700;margin-bottom:12px;border:1px solid rgba(255,214,0,.15);text-transform:uppercase;letter-spacing:1px}
+
+  /* Price note */
+  .price-note{background:linear-gradient(135deg,rgba(255,214,0,.06),rgba(255,214,0,.02));border:1px solid var(--border2);border-left:4px solid var(--gold);padding:20px 24px;border-radius:0 16px 16px 0;margin:24px 0}
+  .price-note p{font-size:.95rem;color:var(--text);line-height:1.6}
+
+  /* Results */
+  .results{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px}
+  .result-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center}
+  .result-card .val{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .result-card .lbl{font-size:.75rem;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+  .result-card .desc{font-size:.8rem;color:var(--text2);margin-top:4px}
+
+  /* Timeline */
+  .timeline{display:flex;gap:0;margin-top:20px;position:relative}
+  .timeline::before{content:'';position:absolute;top:24px;left:0;right:0;height:2px;background:var(--border2)}
+  .timeline-step{flex:1;text-align:center;position:relative}
+  .timeline-dot{width:16px;height:16px;border-radius:50%;background:var(--gold);margin:16px auto;position:relative;z-index:1}
+  .timeline-label{font-size:.75rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px}
+  .timeline-desc{font-size:.82rem;color:var(--text2);margin-top:8px;line-height:1.4}
+
+  /* Next steps */
+  .steps{display:flex;gap:20px;margin-top:20px}
+  .step{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center}
+  .step-num{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .step-title{font-weight:700;margin:8px 0 4px;font-size:.95rem}
+  .step-desc{font-size:.82rem;color:var(--text2)}
+
+  /* Footer */
+  .footer{margin-top:60px;padding-top:30px;border-top:2px solid var(--border2);text-align:center}
+  .footer .logo{font-size:1.1rem;margin-bottom:8px;display:block}
+  .footer p{font-size:.8rem;color:var(--text3)}
+
+  /* Print */
+  @media print{
+    body{background:#fff;color:#111}
+    :root{--gold:#B8860B;--bg:#fff;--surface:#f8f8f8;--surface2:#eee;--border:#ddd;--border2:#B8860B;--text:#111;--text2:#444;--text3:#888;--gold-glow:rgba(184,134,11,.1)}
+    .container{padding:30px 40px}
+    .package,.result-card,.step{break-inside:avoid}
+    .section{break-inside:avoid}
+    .result-card .val,.step-num{-webkit-text-fill-color:#B8860B;color:#B8860B}
+    @page{margin:2cm}
+  }
+
+  @media(max-width:768px){
+    .packages,.results,.steps{grid-template-columns:1fr}
+    .timeline{flex-direction:column;gap:0}
+    .timeline::before{display:none}
+    .timeline-step{text-align:left;display:flex;align-items:flex-start;gap:16px;padding:12px 0;border-left:2px solid var(--border2);padding-left:20px;margin-left:8px;position:relative}
+    .timeline-dot{margin:4px 0 0;flex-shrink:0;position:absolute;left:-9px}
+    h1{font-size:2rem}
+    h2{font-size:1.4rem}
+    p.lead{font-size:.95rem}
+    .container{padding:24px 16px}
+    .header{flex-direction:column;gap:16px;text-align:center}
+    .header-right{text-align:center}
+    .package{padding:20px}
+    .package li{font-size:.82rem;padding:5px 0}
+    .client-box{padding:18px 20px}
+    .result-card{padding:16px}
+    .result-card .val{font-size:1.5rem}
+    .step{padding:18px}
+    .section{margin-bottom:36px}
+    .price-note{padding:16px 18px}
+    .price-note p{font-size:.88rem}
+    .footer{margin-top:40px}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo"><span>Scroll</span> Studio</div>
+    <div class="header-right">
+      <strong>Árajánlat</strong><br>
+      2026. március 23.<br>
+      Érvényesség: 30 nap
+    </div>
+  </div>
+
+  <!-- BEMUTATKOZÁS -->
+  <div class="section">
+    <div class="section-label">Scroll Studio Kft.</div>
+    <h1>Digitális marketing <span class="accent">partner</span></h1>
+    <p class="lead">Marketing, webfejlesztés és tartalomgyártás kis- és középvállalkozásoknak. Adatokból dolgozunk, mérhető eredményeket szállítunk — nem ígéreteket.</p>
+  </div>
+
+  <!-- ÜGYFÉL -->
+  <div class="section">
+    <div class="client-box">
+      <h3>Készült</h3>
+      <p><strong>BV Tempó Kft.</strong> részére</p>
+      <p>Építőanyag-kereskedés és tüzép</p>
+      <p>Budapest XXII. kerület (Budafok-Tétény) — 1996 óta</p>
+      <p>Telephelyek: Kossuth utca 12. | Csúcs utca 60-64.</p>
+    </div>
+  </div>
+
+  <!-- SZOLGÁLTATÁSI CSOMAGOK -->
+  <div class="section">
+    <div class="section-label">Szolgáltatási csomagok</div>
+    <h2>Három opció — <span class="accent">Önök választanak</span></h2>
+    <p class="lead" style="margin-bottom:8px">Minden csomag az Önök igényeihez igazítható. Nincs hosszú távú elköteleződés — havi szerződés, bármikor felmondható.</p>
+
+    <div class="packages">
+      <!-- ALAP -->
+      <div class="package">
+        <div class="package-name">Alap</div>
+        <div class="package-title">Online alapok</div>
+        <div class="package-desc">A legfontosabb lépések, amelyekkel azonnali láthatóságot érhet el — minimális befektetéssel.</div>
+        <ul>
+          <li>Google Business Profile optimalizálás (2 telephely)</li>
+          <li>Értékelés-gyűjtési stratégia és kártyák</li>
+          <li>Weboldal gyors audit + javítási javaslatok</li>
+          <li>Heti 1 Google bejegyzés</li>
+          <li>Havi riport (kulcs mutatók)</li>
+        </ul>
+      </div>
+
+      <!-- STANDARD -->
+      <div class="package featured">
+        <span class="badge">Legnépszerűbb</span>
+        <div class="package-name">Standard</div>
+        <div class="package-title">Aktív növekedés</div>
+        <div class="package-desc">Teljes online jelenlét kiépítése — hirdetések, social media és tartalom, amely rendszeresen hoz új vevőket.</div>
+        <ul>
+          <li>Minden, ami az Alap csomagban</li>
+          <li>Google Ads kampányok kezelése</li>
+          <li>Facebook + Instagram kezelés (heti 3 poszt)</li>
+          <li>2 landing page (homok szállítás, kavics rendelés)</li>
+          <li>Havi 1 blog cikk (SEO optimalizált)</li>
+          <li>Havi konzultáció + részletes riport</li>
+        </ul>
+      </div>
+
+      <!-- PRÉMIUM -->
+      <div class="package">
+        <div class="package-name">Prémium</div>
+        <div class="package-title">Piaci dominancia</div>
+        <div class="package-desc">Teljes digitális stratégia — a cél, hogy a XXII. kerület és Dél-Budapest első számú tüzépe legyenek online.</div>
+        <ul>
+          <li>Minden, ami a Standard csomagban</li>
+          <li>Google Ads remarketing kampány</li>
+          <li>Facebook + Instagram hirdetések kezelése</li>
+          <li>Social media napi poszt + Instagram</li>
+          <li>Havi 2 blog cikk + videó tartalom</li>
+          <li>3 landing page (+ tűzifa szezonális)</li>
+          <li>Email marketing rendszer kiépítése</li>
+          <li>Havi stratégiai konzultáció</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="price-note">
+      <p><strong>Az árazást személyesen egyeztetjük</strong> az igények pontos felmérése után. Minden csomag havi díjas, nincs hosszú távú elköteleződés. A hirdetési büdzsé (Google Ads, Facebook Ads) külön tétel — felette teljes kontrollal rendelkeznek.</p>
+    </div>
+  </div>
+
+  <!-- VÁRHATÓ EREDMÉNYEK -->
+  <div class="section">
+    <div class="section-label">Várható eredmények</div>
+    <h2>Mit hoznak a <span class="accent">számok</span>?</h2>
+
+    <div class="results">
+      <div class="result-card">
+        <div class="val">30-80</div>
+        <div class="lbl">Havi új érdeklődő</div>
+        <div class="desc">Telefon + űrlap + üzenet</div>
+      </div>
+      <div class="result-card">
+        <div class="val">50+</div>
+        <div class="lbl">Google értékelés</div>
+        <div class="desc">6 hónapon belül</div>
+      </div>
+      <div class="result-card">
+        <div class="val">5-10x</div>
+        <div class="lbl">Becsült ROI</div>
+        <div class="desc">6 hónap után</div>
+      </div>
+    </div>
+
+    <div class="results" style="margin-top:16px">
+      <div class="result-card">
+        <div class="val">1.500+</div>
+        <div class="lbl">Havi weboldal látogató</div>
+        <div class="desc">6. hónaptól</div>
+      </div>
+      <div class="result-card">
+        <div class="val">2.000+</div>
+        <div class="lbl">Google Maps megjelenés</div>
+        <div class="desc">Havonta</div>
+      </div>
+      <div class="result-card">
+        <div class="val">1M+ Ft</div>
+        <div class="lbl">Becsült havi új bevétel</div>
+        <div class="desc">Konzervatív becslés</div>
+      </div>
+    </div>
+
+    <div class="price-note" style="margin-top:20px">
+      <p><strong>Konzervativ számítás:</strong> 50 havi érdeklődőből 25% vásárol = 12-13 új vevő × 80.000 Ft átlagos rendelés = <strong>havi ~1 millió Ft új bevétel</strong>. A marketing költség ennek töredéke.</p>
+    </div>
+  </div>
+
+  <!-- ÜTEMTERV -->
+  <div class="section">
+    <div class="section-label">Ütemterv</div>
+    <h2>Hogyan <span class="accent">haladunk</span>?</h2>
+
+    <div class="timeline">
+      <div class="timeline-step">
+        <div class="timeline-label">1-2. hét</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-desc"><strong>Audit & stratégia</strong><br>Google profil, Analytics, versenytárs elemzés, célok</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-label">1. hónap</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-desc"><strong>Indulás</strong><br>Első kampányok, social media, értékelés-gyűjtés</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-label">2-3. hónap</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-desc"><strong>Optimalizálás</strong><br>Kampány finomhangolás, landing page-ek, blog tartalom</div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-label">4. hónaptól</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-desc"><strong>Skálázás</strong><br>Büdzsé növelés a legjobb kampányokon, tartalom bővítés</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KÖVETKEZŐ LÉPÉSEK -->
+  <div class="section">
+    <div class="section-label">Következő lépések</div>
+    <h2>Hogyan <span class="accent">indulunk</span>?</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Ingyenes audit</div>
+        <div class="step-desc">Feltérképezzük a jelenlegi online jelenlétet és a piaci lehetőségeket. Semmire nem kötelez.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Személyre szabott ajánlat</div>
+        <div class="step-desc">Az audit alapján pontos tervet készítünk — célok, ütemterv, várható eredmények.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Indulás</div>
+        <div class="step-desc">Szerződéskötés után 2 héten belül elindítjuk az első kampányokat. Látható eredmények azonnal.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIÉRT MI -->
+  <div class="section">
+    <div class="section-label">Miért a Scroll Studio?</div>
+    <div class="packages" style="grid-template-columns:1fr 1fr">
+      <div class="package">
+        <div class="package-name">Amit kapnak</div>
+        <ul>
+          <li>Havi átlátható riport — minden szám látható</li>
+          <li>Nincs hosszú távú elköteleződés — havi szerződés</li>
+          <li>Gyors reakcióidő — nem hetekig tart minden</li>
+          <li>Személyes partner — nem egy arc nélküli ügynökség</li>
+          <li>Adatvezérelt döntések — nem megérzések</li>
+        </ul>
+      </div>
+      <div class="package">
+        <div class="package-name">Amit NEM kapnak</div>
+        <ul style="opacity:.7">
+          <li style="color:var(--text3)">Rejtett költségek vagy apró betűs rész</li>
+          <li style="color:var(--text3)">Hónapokig tartó projektek eredmény nélkül</li>
+          <li style="color:var(--text3)">Marketing zsargon érthetetlen riportokban</li>
+          <li style="color:var(--text3)">Automatikus megújulás figyelmeztetés nélkül</li>
+          <li style="color:var(--text3)">Üres ígéretek számok nélkül</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="logo"><span>Scroll</span> Studio</div>
+    <p>Marketing · Webfejlesztés · Tartalomgyártás</p>
+    <p style="margin-top:8px">Budapest · scrollstudio.hu</p>
+    <p style="margin-top:16px;font-size:.75rem;color:var(--text3)">Ez az ajánlat bizalmas, kizárólag a BV Tempó Kft. részére készült.</p>
+  </div>
+
+</div>
+
+</body>
+</html>
