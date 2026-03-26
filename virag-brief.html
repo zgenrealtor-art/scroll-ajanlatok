@@ -473,9 +473,8 @@ tr:nth-child(even){background:#FFF5F7}
 
 <script>
 function checkPw(){
-var h='c3plcmludGVtYXZpdHlhbWVnbnllcmk=';
 var i=document.getElementById('pw-input').value;
-if(btoa(unescape(encodeURIComponent(i)))===h){
+if(i===atob('c3plcmludGVtYXZpdHlhbWVnbnllcmk=')){
 document.getElementById('lock-screen').classList.add('hidden');
 document.getElementById('main-content').style.display='block';
 }else{
