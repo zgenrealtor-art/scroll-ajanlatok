@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>BV TEMPÓ KFT — Bejárási Audit | Scroll Studio</title>
+<style>
+  :root {
+    --primary: #7C3AED;
+    --secondary: #F59E0B;
+    --dark: #1E1E2E;
+    --bg: #0F0F1A;
+    --card: #1A1A2E;
+    --card2: #232340;
+    --text: #E2E2F0;
+    --muted: #9090B0;
+    --success: #22C55E;
+    --danger: #EF4444;
+    --info: #3B82F6;
+    --viktor: #7C3AED;
+    --dani: #F59E0B;
+    --barni: #22C55E;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--primary), #5B21B6);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .header h1 { font-family: 'Montserrat', sans-serif; font-size: 1.6em; font-weight: 800; color: #fff; }
+  .header .subtitle { color: rgba(255,255,255,0.8); font-size: 0.95em; margin-top: 4px; }
+  .header .meta { display: flex; justify-content: center; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .header .meta span { background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; font-size: 0.82em; color: #fff; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  .tab {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    background: var(--card);
+    border: none;
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab.active { background: var(--primary); color: #fff; }
+  .tab:hover { background: var(--card2); color: var(--text); }
+  .tab.active:hover { background: var(--primary); color: #fff; }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .card h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.15em;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card h3 {
+    font-size: 0.95em;
+    font-weight: 700;
+    margin: 16px 0 8px 0;
+    color: var(--secondary);
+  }
+
+  /* Role badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-viktor { background: rgba(124,58,237,0.2); color: var(--viktor); }
+  .badge-dani { background: rgba(245,158,11,0.2); color: var(--dani); }
+  .badge-barni { background: rgba(34,197,94,0.2); color: var(--barni); }
+
+  /* Role boxes */
+  .role-box {
+    border-radius: 10px;
+    padding: 14px;
+    margin: 10px 0;
+  }
+  .role-viktor { background: rgba(124,58,237,0.08); border-left: 3px solid var(--viktor); }
+  .role-dani { background: rgba(245,158,11,0.08); border-left: 3px solid var(--dani); }
+  .role-barni { background: rgba(34,197,94,0.08); border-left: 3px solid var(--barni); }
+  .role-box .role-title { font-weight: 700; font-size: 0.85em; margin-bottom: 8px; }
+
+  /* Checklist */
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    margin-top: 2px;
+    accent-color: var(--primary);
+    cursor: pointer;
+  }
+  .check-item label { cursor: pointer; font-size: 0.92em; }
+  .check-item.checked label { text-decoration: line-through; color: var(--muted); }
+
+  /* Text areas */
+  .note-area {
+    width: 100%;
+    min-height: 80px;
+    background: var(--card2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9em;
+    resize: vertical;
+    margin-top: 6px;
+  }
+  .note-area:focus { outline: none; border-color: var(--primary); }
+  .note-area::placeholder { color: var(--muted); }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 10px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+  th { background: var(--card2); color: var(--secondary); text-align: left; padding: 10px; font-weight: 700; white-space: nowrap; }
+  td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .strength { color: var(--success); }
+  .weakness { color: var(--danger); }
+  .advantage { color: var(--secondary); }
+
+  /* Info boxes */
+  .info-box {
+    background: rgba(59,130,246,0.1);
+    border-left: 3px solid var(--info);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    font-size: 0.88em;
+  }
+  .warning-box {
+    background: rgba(245,158,11,0.1);
+    border-left: 3px solid var(--secondary);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    font-size: 0.88em;
+  }
+  .danger-box {
+    background: rgba(239,68,68,0.1);
+    border-left: 3px solid var(--danger);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 10px 0;
+    font-size: 0.88em;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--card2);
+    border-radius: 3px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* Reaction tracker */
+  .reaction-row {
+    display: flex;
+    gap: 8px;
+    margin: 6px 0;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .reaction-btn {
+    padding: 4px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .reaction-btn.selected { border-color: transparent; }
+  .reaction-btn.r-love.selected { background: rgba(34,197,94,0.2); color: var(--success); }
+  .reaction-btn.r-meh.selected { background: rgba(245,158,11,0.2); color: var(--secondary); }
+  .reaction-btn.r-no.selected { background: rgba(239,68,68,0.2); color: var(--danger); }
+  .reaction-btn.r-question.selected { background: rgba(59,130,246,0.2); color: var(--info); }
+
+  .idea-text { font-size: 0.88em; flex: 1; min-width: 200px; }
+
+  /* Timer */
+  .timer-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--dark);
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.85em;
+  }
+  .timer-display { font-family: monospace; font-size: 1.3em; font-weight: 700; color: var(--secondary); }
+  .timer-btn {
+    padding: 6px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.85em;
+    cursor: pointer;
+  }
+  .timer-start { background: var(--success); color: #fff; }
+  .timer-stop { background: var(--danger); color: #fff; }
+  .timer-phase { color: var(--muted); }
+
+  /* Summary section specials */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
+
+  .summary-card {
+    background: var(--card2);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .summary-card h4 { font-size: 0.85em; color: var(--muted); margin-bottom: 6px; }
+
+  /* Budget selector */
+  .budget-options { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  .budget-btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: var(--text);
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .budget-btn.selected { border-color: var(--primary); background: rgba(124,58,237,0.15); }
+
+  /* Photo reminder */
+  .photo-reminder {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(124,58,237,0.1);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.78em;
+    color: var(--primary);
+    margin: 2px;
+  }
+
+  /* Save indicator */
+  .save-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--success);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.82em;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 999;
+  }
+  .save-indicator.show { opacity: 1; }
+
+  /* Scroll Studio footer */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 0.78em;
+  }
+  .footer a { color: var(--primary); text-decoration: none; }
+
+  /* Print styles */
+  @media print {
+    body { background: #fff; color: #000; }
+    .timer-bar, .tabs { display: none; }
+    .section { display: block !important; page-break-inside: avoid; }
+    .card { border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Timer Bar -->
+<div class="timer-bar">
+  <span class="timer-phase" id="timerPhase">Audit nem indult</span>
+  <span class="timer-display" id="timerDisplay">00:00</span>
+  <button class="timer-btn timer-start" id="timerBtn" onclick="toggleTimer()">Indítás</button>
+</div>
+
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+  <h1>BV TEMPO KFT — Bejarasi Audit</h1>
+  <div class="subtitle">Scroll Studio | Vallalkozas Audit 2 oraban</div>
+  <div class="meta">
+    <span>2026.04.01. 14:00</span>
+    <span>Csucs u. 60-64, Budapest XXII.</span>
+    <span>Baki Laszlo, ugyvezeto</span>
+  </div>
+</div>
+
+<!-- Progress -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="showSection('roles')">Szerepek</button>
+  <button class="tab" onclick="showSection('opening')">Nyitas</button>
+  <button class="tab" onclick="showSection('competitors')">Versenytarsak</button>
+  <button class="tab" onclick="showSection('phase1')">1. Uzlet</button>
+  <button class="tab" onclick="showSection('phase2')">2. Online</button>
+  <button class="tab" onclick="showSection('phase3')">3. Folyamatok</button>
+  <button class="tab" onclick="showSection('phase4')">4. Fejlesztes</button>
+  <button class="tab" onclick="showSection('summary')">Osszegzes</button>
+  <button class="tab" onclick="showSection('cheatsheet')">Puska</button>
+</div>
+
+<!-- ==================== ROLES ==================== -->
+<div class="section active" id="sec-roles">
+  <div class="card">
+    <h2>Szereposztas</h2>
+
+    <div class="role-box role-viktor">
+      <div class="role-title"><span class="badge badge-viktor">Viktor</span> Kerdezo + vezeto</div>
+      <ul style="margin-left:16px; font-size:0.9em;">
+        <li>Te vezeted a beszelgetest, te kerdezel</li>
+        <li>80% hallgatas, 20% beszelv — Laszlo mesel, te figyelj</li>
+        <li>Szemkontaktus es aktiv hallgatas — NE jegyzetelj!</li>
+        <li>Tukrozd vissza az utolso 1-3 szavat → tobbet mond</li>
+        <li>NE pitchelj es NE adj arakat — ez felterekpezes</li>
+      </ul>
+    </div>
+
+    <div class="role-box role-dani">
+      <div class="role-title"><span class="badge badge-dani">Dani</span> Jegyzetelo + folyamat expert</div>
+      <ul style="margin-left:16px; font-size:0.9em;">
+        <li>Folyamatosan jegyzetelsz — kulcsmondatok, NEM szo szerint</li>
+        <li>A rendelesi folyamat a te fokusz teruleted (3. fazis)</li>
+        <li>Te ismered a ceget belulrol — amit masok nem latnak, azt ird le</li>
+        <li>Szamokat, neveket, szoftvereket MINDIG ird le</li>
+        <li>Te itt a csalad vagy — ez elony, de legy profi. A hatterben dolgozol.</li>
+      </ul>
+    </div>
+
+    <div class="role-box role-barni">
+      <div class="role-title"><span class="badge badge-barni">Barni</span> Otletek + reakciok + foto</div>
+      <ul style="margin-left:16px; font-size:0.9em;">
+        <li>Kisebb-nagyobb fejlesztesi otleteket vetsz fel a megfelelo pillanatban</li>
+        <li><strong>FIGYELED LASZLO REAKCIOIT</strong> minden otletnel (tetszett / szkeptikus / kerdezett vissza)</li>
+        <li>Fotozel: telephely, gepek, termekek, tablak — DE NEM belso szamlak/dokumentumok!</li>
+        <li>Helyszinen megnyitod a weboldalakat (Google Maps, versenytatrsak) telefonon</li>
+        <li>Az otleteid nem eladas — inkabb "gondolkodtunk ezen, mit szolnal?"</li>
+      </ul>
+    </div>
+
+    <div class="warning-box">
+      <strong>Fotoszabaly:</strong> Telephelyet, raktart, gepeket, termekeket, kihelyezest, tablakat fotozhattok. <strong>Belso dokumentumokat (szamlak, szerzodavesek, penzugyi adatok) NEM fotozunk!</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Amit mar tudunk a BV Tempo-rol</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><th style="width:35%">Adat</th><th>Reszlet</th></tr>
+        <tr><td>Teljes nev</td><td>BV TEMPO Szolgaltato, Ipari es Kereskedelmi Kft.</td></tr>
+        <tr><td>Ugyvezeto</td><td>Baki Laszlo (Dani apukaja)</td></tr>
+        <tr><td>Alapitva</td><td>1996 — 30 eves ceg!</td></tr>
+        <tr><td>Szekhely</td><td>1225 Budapest, Kossuth utca 12.</td></tr>
+        <tr><td>Telephely</td><td>Csucs u. 60-64, 1224 Budapest</td></tr>
+        <tr><td>Letszam</td><td>5-9 fo</td></tr>
+        <tr><td>Arbevetel (2024)</td><td>~152M Ft</td></tr>
+        <tr><td>Profit</td><td>2M Ft alatt — szukos marzs!</td></tr>
+        <tr><td>Fotevekenyság</td><td>Fa-, epitoanyag-, szaniteraru-nagykereskedelem (TEAOR 4683)</td></tr>
+        <tr><td>Szolgaltatasok</td><td>Epitoanyag kereskedelem, tuzelo, gepi foldmunka, tereprendezes, hidraulika tomlo gyartas</td></tr>
+        <tr><td>Termekek</td><td>Kavics, homok, termofold, kopor, murva, cement, mesz, zsaluko, tuzifa, szen, vasaru</td></tr>
+        <tr><td>Vevok</td><td>~60% maganszemely, ~40% ceg</td></tr>
+        <tr><td>Online jelenlét</td><td>Regi Google Sites oldal (NEM elo!), domain-t megkapjuk, Facebook oldal letezik de inaktiv</td></tr>
+        <tr><td>Velemenyek</td><td>4.8/5 — korrekt arak, gyors kiszolgalas, DE ugyfelkezeles javitando</td></tr>
+        <tr><td>Gepi foldmunka</td><td>Vallalna szivesen, DE nincs gepkezeloje — toborzas a kulcs!</td></tr>
+      </table>
+    </div>
+    <div class="danger-box">
+      <strong>NE mondj szamokat Laszlonak a cegarol!</strong> (arbevetel, profit) — o nem tudja hogy mi tudjuk. Kerdezd: "Hogyan alakulnak a marzsok?"
+    </div>
+  </div>
+</div>
+
+<!-- ==================== OPENING ==================== -->
+<div class="section" id="sec-opening">
+  <div class="card">
+    <h2>Nyito pitch — Viktor mondja</h2>
+    <div class="info-box" style="font-size:1em; line-height:1.7;">
+      „Laszlo, koszonjuk hogy fogad minket! Hadd mondjam el roviden, hogyan gondoltuk ezt a 2 orat.<br><br>
+      Ez <strong>NEM egy eladas</strong> — ez egy kozos felmeres. Szeretnenk megerteni, hogyan mukodik a ceg nap mint nap, hol vannak olyan pontok ahol idot vagy penzt lehetne sporolni, es hol vannak novekedesi lehetosegek.<br><br>
+      Vegigmegyunk 4 teruleten: az <strong>uzleti helyzeten</strong>, a <strong>vevoszerzesen</strong>, a <strong>napi folyamatokon</strong>, es a <strong>digitalis lehetosegeken</strong>.<br><br>
+      A vegen osszefoglaljuk amit lattunk, es ha van ertelme az egyuttmukodesnek — javaslatot kuldunk. Ha nincs — az is teljesen rendben van.<br><br>
+      <strong>Jol hangzik?"</strong>
+    </div>
+    <div class="warning-box">
+      <strong>A nyitas celja:</strong> Laszlo erezze, hogy ez NEM egy nyomulos sales meeting, hanem kozos munka. Ha azt mondja "Jol hangzik" — megvan a nyitas.
+    </div>
+  </div>
+</div>
+
+<!-- ==================== COMPETITORS ==================== -->
+<div class="section" id="sec-competitors">
+  <div class="card">
+    <h2>Kozvetlen versenytarsak (XXII. kerulet)</h2>
+    <div class="table-wrap">
+      <table>
+        <tr>
+          <th>Versenytars</th>
+          <th>Hol</th>
+          <th>Erosséguk</th>
+          <th>Gyengeseguk</th>
+          <th>BV Tempo elonye</th>
+        </tr>
+        <tr>
+          <td><strong>Harosi Tuzep Kft.</strong></td>
+          <td>Haros u. 9, XXII. ker.</td>
+          <td class="strength">Kozel van, van weboldal</td>
+          <td class="weakness">Regi oldal, nincs webshop</td>
+          <td class="advantage">Szelesseb valasztek + foldmunka</td>
+        </tr>
+        <tr>
+          <td><strong>Regi-Comp Epitoanyag</strong></td>
+          <td>Pannonia u. 31, XXII. ker.</td>
+          <td class="strength">20+ ev, helyi ismertseg</td>
+          <td class="weakness">Limitalt online</td>
+          <td class="advantage">Gepimunka szolgaltatas is</td>
+        </tr>
+        <tr>
+          <td><strong>Kalodas Tuzifa</strong></td>
+          <td>Kossuth L. u. 88, XXII. ker.</td>
+          <td class="strength">Tuzifa specialista</td>
+          <td class="weakness">Csak tuzifa, szuk kinálat</td>
+          <td class="advantage">Full epitoanyag + tuzelo</td>
+        </tr>
+        <tr>
+          <td><strong>Sodertelep Budafok</strong></td>
+          <td>Araszto u. 2, XI. ker.</td>
+          <td class="strength">Kavics specialista</td>
+          <td class="weakness">Csak kavics/soder, korl. nyitvatartas</td>
+          <td class="advantage">Komplettebb kinálat</td>
+        </tr>
+        <tr>
+          <td><strong>Eberhardt Haz Kft.</strong></td>
+          <td>Balatoni ut, XXII. ker.</td>
+          <td class="strength">1993 ota, <strong>WooCommerce webshop!</strong></td>
+          <td class="weakness">—</td>
+          <td class="advantage" style="color:var(--danger)">OK A LEGMODERNEBB — merce!</td>
+        </tr>
+        <tr>
+          <td><strong>Fokusz Epitoanyag</strong></td>
+          <td>Ocsai ut, XXIII. ker.</td>
+          <td class="strength">Szeles kinálat, szigeteles is</td>
+          <td class="weakness">Kicsit messzebb (Soroksar)</td>
+          <td class="advantage">BV kozelebb a XXII. ker.-hez</td>
+        </tr>
+      </table>
+    </div>
+    <div class="info-box">
+      <strong>Fo kovetkeztetes:</strong> A BV Tempo EGYETLEN versenytarsa sincs online rendesen a XXII. keruletben (kivetel Eberhardt). Aki eloszor mozdul, az nyer!
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Online versenytarsak (szallitas)</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Ceg</th><th>Weboldal</th><th>Amit jol csinalnak</th></tr>
+        <tr>
+          <td><strong>homokszallitas.hu</strong></td>
+          <td>Profi oldal</td>
+          <td>Automatikus ar + fuvarkoltseg kalkulator, SEO</td>
+        </tr>
+        <tr>
+          <td><strong>kavicsszallitas.hu</strong></td>
+          <td>Profi oldal</td>
+          <td>Azonos modell, eros Google jelenlét</td>
+        </tr>
+        <tr>
+          <td><strong>ambrusfuvar.hu</strong></td>
+          <td>Termofold specialista</td>
+          <td>Eros Google jelenlét, anyagismeret</td>
+        </tr>
+        <tr>
+          <td><strong>epitoanyag.hu</strong></td>
+          <td>Profi webshop</td>
+          <td>150 gyarto, 30p atvétel, Messenger chatbot, 28 ev</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Piaci arak referencia (2026)</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Anyag</th><th>Piaci ar/m3</th><th>BV Tempo ara?</th></tr>
+        <tr><td>Homok (mosott)</td><td>~9.000 Ft</td><td><input type="text" class="note-area" style="min-height:30px;padding:6px;" placeholder="Kerdezd meg..." data-save="price-homok"></td></tr>
+        <tr><td>Termofold</td><td>~8.000 Ft</td><td><input type="text" class="note-area" style="min-height:30px;padding:6px;" placeholder="Kerdezd meg..." data-save="price-termofold"></td></tr>
+        <tr><td>Soder (0-24)</td><td>~8-9.000 Ft</td><td><input type="text" class="note-area" style="min-height:30px;padding:6px;" placeholder="Kerdezd meg..." data-save="price-soder"></td></tr>
+        <tr><td>Kavics (16-32)</td><td>~10.000 Ft</td><td><input type="text" class="note-area" style="min-height:30px;padding:6px;" placeholder="Kerdezd meg..." data-save="price-kavics"></td></tr>
+        <tr><td>Murva</td><td>~8.000 Ft</td><td><input type="text" class="note-area" style="min-height:30px;padding:6px;" placeholder="Kerdezd meg..." data-save="price-murva"></td></tr>
+        <tr><td>Szallitas (Bp.)</td><td>~13-15.000 Ft/fuvar</td><td><input type="text" class="note-area" style="min-height:30px;padding:6px;" placeholder="Kerdezd meg..." data-save="price-szallitas"></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Gepkezelo toborzas — piaci helyzet</h2>
+    <ul style="margin-left:16px; font-size:0.9em;">
+      <li>Gepi foldmunka piaca Budapest kornyeken <strong>eros kereslet</strong></li>
+      <li>A piac szetaprozott: sok egyeni vallalkozo, keves megbizhato, skalazato ceg</li>
+      <li>Gepkezelo munkaero <strong>hianycikk</strong> — aki talal, annak komoly versenyelonye lesz</li>
+      <li>Toborzasi csatornak: Profession.hu, Jofogás, Facebook csoportok („Foldmunka Budapest", „Epitoipari allasok")</li>
+      <li>A gepi foldmunka szegmens <strong>jovedelmezobb</strong> mint a kereskedelem</li>
+    </ul>
+    <div class="warning-box">
+      <strong>Scroll lehetoseg:</strong> Toborzasi kampany Facebook-on celzott hirdetessel az epitoipari csoportokban — ez opcionalisan ajanlhato!
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 1 ==================== -->
+<div class="section" id="sec-phase1">
+  <div class="card">
+    <h2>1. Uzleti helyzet es novekedes <span style="font-size:0.7em;color:var(--muted)">14:05–14:30</span></h2>
+
+    <div class="role-box role-viktor">
+      <div class="role-title"><span class="badge badge-viktor">Viktor</span> kerdez</div>
+      <div class="check-item"><input type="checkbox" id="q1-1"><label for="q1-1">Hogyan valtozott az epitoanyag piac az utobbi 2 evben? Erzik a hatasat?</label></div>
+      <div class="check-item"><input type="checkbox" id="q1-2"><label for="q1-2">A 30 ev alatt mi volt a csucsiodszak? Most hol tartanak ahhoz kepest?</label></div>
+      <div class="check-item"><input type="checkbox" id="q1-3"><label for="q1-3">A gepi foldmunka mekkora resze a bevetelnek vs. kereskedelem?</label></div>
+      <div class="check-item"><input type="checkbox" id="q1-4"><label for="q1-4">Mi tartja vissza a foldmunka bovitést? (→ gepkezelo tema)</label></div>
+      <div class="check-item"><input type="checkbox" id="q1-5"><label for="q1-5">A maganszemelyek vs. ceges vevok — melyik a jovedelmezobb?</label></div>
+      <div class="check-item"><input type="checkbox" id="q1-6"><label for="q1-6">A ceges vevoknel ki dont? Hogyan valasztanak kereskedot?</label></div>
+      <div class="check-item"><input type="checkbox" id="q1-7"><label for="q1-7">Van visszatero torzsvevokortotok? Aranyuk a bevetelben?</label></div>
+      <div class="check-item"><input type="checkbox" id="q1-8"><label for="q1-8">Mi a legnagyobb versenytars a kornyeken? Miben jobbak?</label></div>
+      <div class="check-item"><input type="checkbox" id="q1-9"><label for="q1-9">Hogyan alakulnak a marzsok? Mi viszi el a penzt? (szallitas, keszlet, munkaero?)</label></div>
+    </div>
+
+    <div class="role-box role-barni">
+      <div class="role-title"><span class="badge badge-barni">Barni</span> otletek (ha jo a pillanat)</div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text">„A gepi foldmunkanal gondolkodtatok toborzasi kampanyban gepkezelokre? Facebook csoportokban eleg aktivan keresnek ilyet..."</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text">„A ceges vevoknek kulon kiszolgalas kellene — mas a pszichologiajuk mint a maganszemelynek. Erre kulonfeloket lehetne epiteni..."</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div class="photo-reminder">Foto: Telephely, udvar, raktár</div>
+      <div class="photo-reminder">Foto: Geppark (ha van)</div>
+      <div class="photo-reminder">Foto: Termekek kihelyezése</div>
+    </div>
+
+    <div class="role-box role-dani">
+      <div class="role-title"><span class="badge badge-dani">Dani</span> jegyzetel</div>
+      <textarea class="note-area" placeholder="Foldmunka vs. kereskedelem aranya..." data-save="p1-foldmunka"></textarea>
+      <textarea class="note-area" placeholder="Gepkezelo helyzet reszletei..." data-save="p1-gepkezelo"></textarea>
+      <textarea class="note-area" placeholder="Maganszemely vs. ceges kiszolgalas kulonbsege..." data-save="p1-vevotipus"></textarea>
+      <textarea class="note-area" placeholder="Versenytarsak amiket Laszlo emlit..." data-save="p1-versenytar"></textarea>
+      <textarea class="note-area" placeholder="Ami meglepo / varatlan info..." data-save="p1-meglepo"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 2 ==================== -->
+<div class="section" id="sec-phase2">
+  <div class="card">
+    <h2>2. Vevoszerzes es online jelenlét <span style="font-size:0.7em;color:var(--muted)">14:30–15:00</span></h2>
+
+    <div class="info-box">Tudjuk: nincs elo weboldal, a domain-t megkapjuk, Facebook letezik de inaktiv, online megjelenes NULLA.</div>
+
+    <div class="role-box role-viktor">
+      <div class="role-title"><span class="badge badge-viktor">Viktor</span> kerdez</div>
+      <div class="check-item"><input type="checkbox" id="q2-1"><label for="q2-1">Most honnan jonnek a vevok? Szajhagyomany, ajanlas, visszatero?</label></div>
+      <div class="check-item"><input type="checkbox" id="q2-2"><label for="q2-2">Hanyan keresnek meg naponta/hetente? Telefonon, szemelyesen?</label></div>
+      <div class="check-item"><input type="checkbox" id="q2-3"><label for="q2-3">Ha valaki Google-on keres „epitoanyag XXII. kerulet" — gondolod hogy megtalal?</label></div>
+      <div class="check-item"><input type="checkbox" id="q2-4"><label for="q2-4">Van / volt Google Cegem profil? Tudjak egyaltalan mi az?</label></div>
+      <div class="check-item"><input type="checkbox" id="q2-5"><label for="q2-5">A Facebook oldalatokat ki kezeli? Mikor volt az utolso poszt?</label></div>
+      <div class="check-item"><input type="checkbox" id="q2-6"><label for="q2-6">Probaltatok mar barmilyen hirdetest? (Google, Facebook?) Mi lett belole?</label></div>
+      <div class="check-item"><input type="checkbox" id="q2-7"><label for="q2-7">A domain-t megkapjuk — mi legyen az uj oldalon?</label></div>
+      <div class="check-item"><input type="checkbox" id="q2-8"><label for="q2-8">„A versenytarsaitok kozul az Eberhardt Haz mar webshopot csinalat — gondolkodtatok ilyesmiben?"</label></div>
+      <div class="check-item"><input type="checkbox" id="q2-9"><label for="q2-9">„Hany vevot veszitetek azzal, hogy aki Google-on keres epitoanyagot a XXII. keruletben, az nem talal ratok?"</label></div>
+    </div>
+
+    <div class="role-box role-barni">
+      <div class="role-title"><span class="badge badge-barni">Barni</span> otletek + reakcio figyeles</div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Chatbot + tudasbazis:</strong> „Kepzeld el, valaki rair este 10-kor: 'milyen kavicsot tegyek a feljaromra?' — a chatbot rogton valaszol, es meg a megfelelo termeketeket is ajanlja az arral egyutt"</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Online arlisat + kalkulator:</strong> „Aki beirja a cimet, rogton latja a fuvarkoltsegét is — nem kell telefonalni"</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Kulon felulet cegeknek es maganszemelynek:</strong> „A ceg latja az ajanlatkérot, torzsvevo logint, szamlazasi adatokat. A maganszemely vizualis kalauz alapjan valaszt: mire kell? feljaro / kert / epites?"</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Facebook rendbetetel:</strong> „Heti 2-3 poszt: termek fotok, akciok, szezonalis tippek, epitkezés tanascsok. Erre tudnank egy sablont kesziteni."</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Blog / SEO tartalom:</strong> „'Melyik kavicsot valasszam a feljaromra?' — ilyen cikkek amik Google-bol hoznak vendéget, es kozben informaljak is a vevot"</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Toborzasi kampany (opcionalis):</strong> „Gepkezelot Facebook-on celzott hirdetessel az epitoipari csoportokban 1-2 het alatt lehet talalni"</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div class="photo-reminder">Kereses: Google Maps „epitoanyag XXII. kerulet" — hanyadik a BV Tempo?</div>
+      <div class="photo-reminder">Foto: ha van kint tabla / reklam</div>
+    </div>
+
+    <div class="role-box role-dani">
+      <div class="role-title"><span class="badge badge-dani">Dani</span> jegyzetel</div>
+      <textarea class="note-area" placeholder="Honnan jonnek a vevok (%)..." data-save="p2-vevoforras"></textarea>
+      <textarea class="note-area" placeholder="Napi/heti megkereses szam..." data-save="p2-megkereses"></textarea>
+      <textarea class="note-area" placeholder="Google Cegem: van/nincs/nem tudja..." data-save="p2-google"></textarea>
+      <textarea class="note-area" placeholder="Facebook utolso poszt datuma, ki kezeli..." data-save="p2-facebook"></textarea>
+      <textarea class="note-area" placeholder="Online nyitottsag (1-10)..." data-save="p2-nyitottsag"></textarea>
+      <textarea class="note-area" placeholder="REAKCIOK Barni otleteire — reszletesen..." data-save="p2-reakciok"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 3 ==================== -->
+<div class="section" id="sec-phase3">
+  <div class="card">
+    <h2>3. Napi mukodes es rendelesi folyamat <span style="font-size:0.7em;color:var(--muted)">15:00–15:30</span></h2>
+
+    <div class="warning-box"><strong>Dani fokusz resz!</strong> Te ismered a ceget — amit masok nem latnak, azt ird le.</div>
+
+    <div class="role-box role-viktor">
+      <div class="role-title"><span class="badge badge-viktor">Viktor</span> kerdez</div>
+      <div class="check-item"><input type="checkbox" id="q3-1"><label for="q3-1">Meselj el egy atlagos napot: reggel kinyitas → mi tortenik → zaras</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-2"><label for="q3-2">Ha jon egy rendeles: ki veszi fel a telefont? Mi a kovetkezo lepes?</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-3"><label for="q3-3">Honnan tudjak mit kell szallitani, mikor, hova?</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-4"><label for="q3-4">Van nyilvantartas a keszletrol? (szoftver / Excel / fejben?)</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-5"><label for="q3-5">Szamlazas hogyan megy? (kezi / Billingo / mas?)</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-6"><label for="q3-6">Ki az aki a legtobb telefonhivast kezeli? Mennyi hivas jon naponta?</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-7"><label for="q3-7">Mi tortenik a nem fogadott hivasokkal?</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-8"><label for="q3-8">Hogyan nez ki a kommunikacio az ugyfelekkel? (telefon, SMS, email, szemelyes?)</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-9"><label for="q3-9">„Mi az ami a legtobb idot viszi el feleslegesen minden nap?"</label></div>
+      <div class="check-item"><input type="checkbox" id="q3-10"><label for="q3-10">Van visszatero problema ami mindig gondot okoz?</label></div>
+    </div>
+
+    <div class="role-box role-barni">
+      <div class="role-title"><span class="badge badge-barni">Barni</span> otletek + reakciok</div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Online rendelesi rendszer:</strong> „Az ugyfél az oldalon kivalasztja az anyagot, megadja a cimet, latja az arat szallitassal — automatikus visszaigazolas SMS-ben / emailben"</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Automatikus visszahivas:</strong> „Nem fogadott hivas? SMS megy: 'Elnezest, nem tudtuk felvenni. Visszahivjuk 30 percen belul, vagy irjon ide amit szeretne.'"</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div style="margin:8px 0;">
+        <div class="idea-text"><strong>Keszletkezelo rendszer:</strong> „Egyszeruen latod mennyi homok/kavics van, mikor kell rendelni, mennyit adtal el a heten"</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <div class="photo-reminder">Foto: Iroda, szamitogep (ha van)</div>
+      <div class="photo-reminder">Foto: Papiralapu nyilvantartas</div>
+      <div class="photo-reminder">Foto: Rendelesi blokk / rendeles menete</div>
+    </div>
+
+    <div class="role-box role-dani">
+      <div class="role-title"><span class="badge badge-dani">Dani</span> RESZLETESEN jegyzetel (ez lesz az ajanlat alapja!)</div>
+      <textarea class="note-area" placeholder="Tipikus nap leirasa (regg-este)..." data-save="p3-tipikusnap" style="min-height:100px;"></textarea>
+      <textarea class="note-area" placeholder="Rendelesi folyamat lepesrol lepesre (1. telefon → 2. ... → 3. ... )..." data-save="p3-rendeles" style="min-height:120px;"></textarea>
+      <textarea class="note-area" placeholder="Ki veszi fel a telefont + napi hivasszam..." data-save="p3-telefon"></textarea>
+      <textarea class="note-area" placeholder="Nem fogadott hivasok kezelese..." data-save="p3-nemfogadott"></textarea>
+      <textarea class="note-area" placeholder="Keszletnyilvantartas modja..." data-save="p3-keszlet"></textarea>
+      <textarea class="note-area" placeholder="Szamlazas modja..." data-save="p3-szamlazas"></textarea>
+      <textarea class="note-area" placeholder="Kommunikacio az ugyfelekkel (csatornak, stilus)..." data-save="p3-kommunikacio"></textarea>
+      <textarea class="note-area" placeholder="Legnagyobb idopocskolo..." data-save="p3-idopocskolo"></textarea>
+      <textarea class="note-area" placeholder="Amit Dani lat es masok NEM (csaladi szempont)..." data-save="p3-dani-belso" style="min-height:100px; border-color: var(--dani);"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PHASE 4 ==================== -->
+<div class="section" id="sec-phase4">
+  <div class="card">
+    <h2>4. Lehetosegek es fejlesztesi iranyok <span style="font-size:0.7em;color:var(--muted)">15:30–16:00</span></h2>
+
+    <div class="role-box role-viktor">
+      <div class="role-title"><span class="badge badge-viktor">Viktor</span> kerdez</div>
+      <div class="check-item"><input type="checkbox" id="q4-1"><label for="q4-1">Ha lenne egy varazispalca — mit valtoztatnal meg holnap a cegben?</label></div>
+      <div class="check-item"><input type="checkbox" id="q4-2"><label for="q4-2">Mennyire nyitott uj szoftverre / rendszerre?</label></div>
+      <div class="check-item"><input type="checkbox" id="q4-3"><label for="q4-3">Volt valaha kepzes a csapatnak? (ugyfelkezeles, ertekesites)</label></div>
+      <div class="check-item"><input type="checkbox" id="q4-4"><label for="q4-4">A vevok neha panaszkodnak? Mire?</label></div>
+      <div class="check-item"><input type="checkbox" id="q4-5"><label for="q4-5">„Ha 1 evet eloreugrunk es minden sikerul — hogyan nez ki a BV Tempo?"</label></div>
+      <div class="check-item"><input type="checkbox" id="q4-6"><label for="q4-6">Havi szinten mennyit tudna a ceg fejlesztesre szanni?</label></div>
+    </div>
+
+    <div class="role-box role-barni">
+      <div class="role-title"><span class="badge badge-barni">Barni</span> otletek — OSSZES reakciot figyeld!</div>
+
+      <h3 style="color: var(--success);">Kisebb (gyors, olcso — 1-2 het)</h3>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Google Cégem profil beallitas — 1-2 nap es megjelentek a terkepen</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Facebook oldal rendbetetel — heti 2-3 poszt termekekrol, akciokrol</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Online arlista a weboldalon — ne kelljen telefonalni</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <h3 style="color: var(--secondary);">Kozepes (1-2 honap)</h3>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Uj weboldal — termekek, arak, online ajanlatkeres, kulon maganszemely + ceges felulet</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Tudasbazis / blog: „Melyik kavicsot valasszam?" tipusu cikkek → Google-bol hoz vendeget + chatbot forras</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Gepkezelo toborzasi kampany Facebookon — celzott hirdetes epitoipari csoportokban</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+
+      <h3 style="color: var(--primary);">Nagyobb (3+ honap)</h3>
+      <div style="margin:8px 0;">
+        <div class="idea-text">AI chatbot a weboldalon: termekismeret, ajanlas, 0-24 kiszolgalas</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Online rendelesi rendszer kalkulatorral, fuvarkoltseg szamitassal, automatikus visszaigazolassal</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Gepi foldmunka mint kulon uzletag — sajat aloldal, referenciak, geppark bemutato</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+      <div style="margin:8px 0;">
+        <div class="idea-text">Uj ugyfelek toborzasa — celzott Facebook/Google kampany a XXII. keruleti felujitoknak, epitkezoknek</div>
+        <div class="reaction-row">
+          <button class="reaction-btn r-love" onclick="toggleReaction(this)">Tetszett</button>
+          <button class="reaction-btn r-meh" onclick="toggleReaction(this)">Semleges</button>
+          <button class="reaction-btn r-no" onclick="toggleReaction(this)">Nem erdekli</button>
+          <button class="reaction-btn r-question" onclick="toggleReaction(this)">Kerdezett vissza</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="role-box role-dani">
+      <div class="role-title"><span class="badge badge-dani">Dani</span> jegyzetel</div>
+      <textarea class="note-area" placeholder="Nyitottsag merteke (1-10)..." data-save="p4-nyitottsag"></textarea>
+      <textarea class="note-area" placeholder="Budsze jelzes..." data-save="p4-budsze"></textarea>
+      <textarea class="note-area" placeholder="Mi erdekelte legjobban..." data-save="p4-erdekles"></textarea>
+      <textarea class="note-area" placeholder="Mi volt a 'hu, ez jo' pillanat..." data-save="p4-hu-ezjo"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="section" id="sec-summary">
+  <div class="card">
+    <h2>Osszegzes — AUTOBAN, ROGTON!</h2>
+    <div class="danger-box">Ez a legfontosabb resz — amig friss, 5 percben toltsetegk ki harman!</div>
+
+    <h3>Viktor: Mi volt a 3 fo fajdalompont?</h3>
+    <textarea class="note-area" placeholder="1. ..." data-save="sum-pain1"></textarea>
+    <textarea class="note-area" placeholder="2. ..." data-save="sum-pain2"></textarea>
+    <textarea class="note-area" placeholder="3. ..." data-save="sum-pain3"></textarea>
+
+    <h3>Barni: Mi volt a 3 otlet amire a legjobban reagalt?</h3>
+    <textarea class="note-area" placeholder="1. ..." data-save="sum-idea1"></textarea>
+    <textarea class="note-area" placeholder="2. ..." data-save="sum-idea2"></textarea>
+    <textarea class="note-area" placeholder="3. ..." data-save="sum-idea3"></textarea>
+
+    <h3>Dani: Mi az 1 dolog amit a csalad szemogebol latsz es mi nem?</h3>
+    <textarea class="note-area" placeholder="..." data-save="sum-dani-insight" style="min-height:100px;"></textarea>
+
+    <h3>Szolgaltatas lehetosegek</h3>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <h4>Scroll Digital</h4>
+        <textarea class="note-area" placeholder="Weboldal, Google Cegem, chatbot, rendelesi rendszer..." data-save="sum-digital"></textarea>
+      </div>
+      <div class="summary-card">
+        <h4>Scroll Studio</h4>
+        <textarea class="note-area" placeholder="Tartalom, Facebook, brand, tudasbazis..." data-save="sum-studio"></textarea>
+      </div>
+      <div class="summary-card">
+        <h4>Scroll Learning</h4>
+        <textarea class="note-area" placeholder="Csapat kepzes, ugyfelkezeles trening..." data-save="sum-learning"></textarea>
+      </div>
+      <div class="summary-card">
+        <h4>Toborzas</h4>
+        <textarea class="note-area" placeholder="Gepkezelo kampany, ugyfeltoborzas..." data-save="sum-toborzas"></textarea>
+      </div>
+    </div>
+
+    <h3>Quick winek (1-2 het)</h3>
+    <textarea class="note-area" placeholder="Azonnal megvalositahto dolgok..." data-save="sum-quickwin"></textarea>
+
+    <h3>Becsult projektmeret</h3>
+    <div class="budget-options">
+      <button class="budget-btn" onclick="selectBudget(this)">Kis (100-300K)</button>
+      <button class="budget-btn" onclick="selectBudget(this)">Kozepes (300-800K)</button>
+      <button class="budget-btn" onclick="selectBudget(this)">Nagy (800K+)</button>
+      <button class="budget-btn" onclick="selectBudget(this)">Folyamatos retainer</button>
+    </div>
+
+    <h3>Kovetkezo lepes + hataridő</h3>
+    <textarea class="note-area" placeholder="Ki csinal mit, mikorra..." data-save="sum-nextep"></textarea>
+
+    <h3>Laszlo reakcioja / hangulata</h3>
+    <textarea class="note-area" placeholder="Altalanos benyomas..." data-save="sum-hangulat"></textarea>
+  </div>
+</div>
+
+<!-- ==================== CHEAT SHEET ==================== -->
+<div class="section" id="sec-cheatsheet">
+  <div class="card">
+    <h2>Viktor puskaja</h2>
+    <div class="info-box" style="font-size: 1em; line-height: 1.8;">
+      <strong>80% hallgatas, 20% beszelv</strong> — Laszlo mesel, te hallgatsz<br><br>
+      <strong>Tukrozes:</strong> ismételd az utolso 1-3 szavat kerdo hangsullyal<br>
+      <em>Pelda: „...nem jott semmi belole" → „...nem jott semmi belole?"</em><br><br>
+      <strong>Erzelem-cimkezes:</strong> „Ugy tunik, hogy...", „Ugy hangzik, mintha..."<br>
+      <em>Pelda: „Ugy tunik, a marketing eddig inkabb koltseg volt, mint befektetes."</em><br><br>
+      <strong>Veszteségkeret:</strong> NE azt kerdezd mit nyernenek → hanem mit VESZITENEK ha nem lépnek<br>
+      <em>Pelda: „Hany vevot veszitetek azzal, hogy online nem vagytok ott?"</em><br><br>
+      <strong>NE mondj szamokat a cegerol!</strong> (arbevetel, profit) — o nem tudja hogy mi tudjuk<br>
+      <em>Kerdezd: „Hogyan alakulnak a marzsok?"</em><br><br>
+      <strong>Weboldal:</strong> NE mondd „katasztrofa"<br>
+      <em>Mondd: „A domain megvan, most rajtunk all hogy mit csinalunk vele"</em><br><br>
+      <strong>Ez Dani apja:</strong> profi, de emberi. NE legy tul „sales-es"<br><br>
+      <strong>Cel:</strong> Amikor Laszlo azt mondja: <em>„Pontosan, ez a helyzet!"</em> — az attores jele. Utana jon az ajanlat.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Termek tudasbazis — amire blog/chatbot epulhet</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Termek</th><th>Mire hasznaljak</th><th>Blog cikk otlet</th></tr>
+        <tr><td><strong>Kavics (16-32mm)</strong></td><td>Feljaro, parkoló, drenazs, diszites</td><td>„Melyik kavicsot valasszam a feljaromra?"</td></tr>
+        <tr><td><strong>Homok (mosott)</strong></td><td>Beton keverés, vakolás, homokozó</td><td>„Homok tipusok — melyik mire jo?"</td></tr>
+        <tr><td><strong>Termofold</strong></td><td>Kerteszet, gyepesites, viragagyas</td><td>„Hogyan valasszak termofold? Rostalt vs. kerti"</td></tr>
+        <tr><td><strong>Soder (0-24)</strong></td><td>Ut alap, feltoltes, beton</td><td>„Utalap epitérs hazilag — soder valasztas"</td></tr>
+        <tr><td><strong>Murva</strong></td><td>Kerti ut, temeto, parkolo, kovezés alap</td><td>„Murva tipusok: kerti, kovező, utalap — melyik kell?"</td></tr>
+        <tr><td><strong>Cement</strong></td><td>Beton, vakolat, burkolás</td><td>„Mennyi cement kell 1m3 betonhoz?"</td></tr>
+        <tr><td><strong>Zsaluko</strong></td><td>Garazs, pince, keritesalap, tamfal</td><td>„Zsaluko vagy tegla? Mikor melyiket valasszam"</td></tr>
+        <tr><td><strong>Tuzifa</strong></td><td>Futes, kandalló, kemence</td><td>„Melyik fa fut a legjobban? Bukk vs. tolgy vs. akac"</td></tr>
+        <tr><td><strong>Kopor</strong></td><td>Ut burkolat, kovezés alap</td><td>„Kopor vagy murva az utalapba?"</td></tr>
+        <tr><td><strong>Mesz</strong></td><td>Vakolas, feherites, talajjavitas</td><td>„Mesz a kertben — mikor es hogyan"</td></tr>
+      </table>
+    </div>
+    <div class="warning-box">
+      <strong>Chatbot koncepcion:</strong> Ezek az anyagok lesznek a tudasbazis, amibola az AI chatbot valaszol. Az ugyfel beírja: „feljarot akarok csinalni" → a chatbot ajanlja a kavicsot + sodert + ara + szallitas. Egyutt ez blog + SEO + chatbot + ugyfelkiszolgalas.
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  Scroll Studio Kft. | <a href="https://scrollstudio.hu">scrollstudio.hu</a><br>
+  Keszult: 2026.03.31. | Offline mukodő — nincs szukseg internetre
+</div>
+
+</div><!-- /container -->
+
+<!-- Save indicator -->
+<div class="save-indicator" id="saveIndicator">Mentve!</div>
+
+<script>
+// === Tab navigation ===
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  event.target.classList.add('active');
+  updateProgress();
+  window.scrollTo(0, 0);
+}
+
+// === Timer ===
+let timerRunning = false;
+let timerStart = 0;
+let timerInterval = null;
+const phases = [
+  { time: 0, label: '1. Uzleti helyzet' },
+  { time: 25, label: '2. Vevoszerzes & online' },
+  { time: 55, label: '3. Napi folyamatok' },
+  { time: 85, label: '4. Fejlesztes & otletek' },
+  { time: 115, label: 'Zaras!' }
+];
+
+function toggleTimer() {
+  const btn = document.getElementById('timerBtn');
+  if (!timerRunning) {
+    timerRunning = true;
+    timerStart = Date.now();
+    btn.textContent = 'Stop';
+    btn.className = 'timer-btn timer-stop';
+    timerInterval = setInterval(updateTimer, 1000);
+  } else {
+    timerRunning = false;
+    btn.textContent = 'Folytatas';
+    btn.className = 'timer-btn timer-start';
+    clearInterval(timerInterval);
+  }
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - timerStart) / 1000);
+  const min = Math.floor(elapsed / 60);
+  const sec = elapsed % 60;
+  document.getElementById('timerDisplay').textContent =
+    String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+
+  // Phase indicator
+  let currentPhase = phases[0].label;
+  for (let i = phases.length - 1; i >= 0; i--) {
+    if (min >= phases[i].time) { currentPhase = phases[i].label; break; }
+  }
+  document.getElementById('timerPhase').textContent = currentPhase;
+
+  // Color warning at 110+ min
+  if (min >= 110) {
+    document.getElementById('timerDisplay').style.color = '#EF4444';
+  }
+}
+
+// === Checkbox persistence ===
+document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+  const saved = localStorage.getItem('bvt-' + cb.id);
+  if (saved === 'true') { cb.checked = true; cb.parentElement.classList.add('checked'); }
+  cb.addEventListener('change', function() {
+    localStorage.setItem('bvt-' + this.id, this.checked);
+    this.parentElement.classList.toggle('checked', this.checked);
+    updateProgress();
+    showSaved();
+  });
+});
+
+// === Textarea persistence ===
+document.querySelectorAll('[data-save]').forEach(el => {
+  const key = 'bvt-' + el.getAttribute('data-save');
+  const saved = localStorage.getItem(key);
+  if (saved) el.value = saved;
+  el.addEventListener('input', function() {
+    localStorage.setItem(key, this.value);
+    showSaved();
+  });
+});
+
+// === Reaction buttons ===
+function toggleReaction(btn) {
+  const row = btn.parentElement;
+  row.querySelectorAll('.reaction-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  // Save
+  const idx = Array.from(document.querySelectorAll('.reaction-row')).indexOf(row);
+  localStorage.setItem('bvt-reaction-' + idx, btn.className);
+  showSaved();
+}
+// Restore reactions
+document.querySelectorAll('.reaction-row').forEach((row, idx) => {
+  const saved = localStorage.getItem('bvt-reaction-' + idx);
+  if (saved) {
+    row.querySelectorAll('.reaction-btn').forEach(b => {
+      if (b.className === saved) b.classList.add('selected');
+    });
+  }
+});
+
+// === Budget selector ===
+function selectBudget(btn) {
+  document.querySelectorAll('.budget-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  localStorage.setItem('bvt-budget', btn.textContent);
+  showSaved();
+}
+// Restore budget
+const savedBudget = localStorage.getItem('bvt-budget');
+if (savedBudget) {
+  document.querySelectorAll('.budget-btn').forEach(b => {
+    if (b.textContent === savedBudget) b.classList.add('selected');
+  });
+}
+
+// === Progress ===
+function updateProgress() {
+  const total = document.querySelectorAll('input[type="checkbox"]').length;
+  const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+  const pct = total > 0 ? Math.round((checked / total) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+updateProgress();
+
+// === Save indicator ===
+function showSaved() {
+  const el = document.getElementById('saveIndicator');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 1500);
+}
+</script>
+
+</body>
+</html>
